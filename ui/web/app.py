@@ -25,8 +25,8 @@ def index(request: Request):
     )
 
 @app.post("/scan", response_class=HTMLResponse)
-def web_scan(request: Request, target: str = Form(...)):
-    engine = ScanEngine()
+def web_scan(request: Request, target: str = Form(...), dom: bool = Form(False)):
+    engine = ScanEngine(dom=dom)
     result = engine.run(target)
 
     return templates.TemplateResponse(

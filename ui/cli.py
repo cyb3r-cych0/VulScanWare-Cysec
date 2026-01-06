@@ -8,8 +8,9 @@ app = typer.Typer(add_completion=False)
 console = Console()
 
 @app.command()
-def scan(target: str = "http://example.com"):
-    engine = ScanEngine()
+def scan(target: str = "http://example.com", dom: bool = False):
+    engine = ScanEngine(dom=dom)
+    result = engine.run(target)
 
     with Progress(
         SpinnerColumn(),
