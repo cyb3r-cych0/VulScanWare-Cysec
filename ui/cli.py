@@ -13,9 +13,18 @@ console = Console()
 def scan(
     target: str = "http://example.com",
     dom: bool = False,
-    report: bool = False
+    report: bool = False,
+    offline: bool = False,
 ):
-    engine = ScanEngine(dom=dom)
+    ai = None
+    if offline:
+        from core.ai.llm_loader import load_llm
+        from core.ai.offline import OfflineAIAdvisor
+
+        llm = load_llm("models/mistral-7b-instruct.Q4_K_M.gguf")
+        ai = OfflineAIAdvisor(llm)
+
+    engine = ScanEngine(dom=dom, ai=ai)
     result = engine.run(target)
 
     if report:
