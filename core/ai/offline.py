@@ -2,12 +2,21 @@ from core.ai.base import AIAdvisor
 
 class OfflineAIAdvisor(AIAdvisor):
     def __init__(self, llm):
-        self.llm = llm  # injected llama-cpp model
+        self.llm = llm
 
     def generate_fix(self, context: dict) -> str:
         prompt = (
-            "You are a secure coding assistant.\n"
-            f"Vulnerability details:\n{context}\n\n"
-            "Provide remediation steps."
+            "You are a secure coding expert.\n"
+            "Explain the vulnerability and give concise remediation steps.\n\n"
+            f"{context}\n"
         )
-        return self.llm(prompt, max_tokens=200)
+
+        out = self.llm(
+            prompt,
+            max_tokens=180,
+            temperature=0.0,
+            top_p=1.0,
+            repeat_penalty=1.1,
+            stop=["</s>"],
+        )
+        return out["choices"][0]["text"].strip()
