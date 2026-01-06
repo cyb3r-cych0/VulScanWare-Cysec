@@ -1,0 +1,31 @@
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE files
+.idea/
+.vscode/
+
+# pip install -e . files
+*.egg-info
+
+# pytest
+.pytest_cache
+
+# local files
+scripts/
+models/
+TODO.md
+reports/output/
+pyproject.toml
