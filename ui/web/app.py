@@ -3,6 +3,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from engine import ScanEngine
+from core.report.html import HTMLReport
+
 
 app = FastAPI(title="VulScanWare Web")
 templates = Jinja2Templates(directory="ui/web/templates")
@@ -28,9 +30,11 @@ def index(request: Request):
 def web_scan(request: Request, target: str = Form(...), dom: bool = Form(False)):
     engine = ScanEngine(dom=dom)
     result = engine.run(target)
+    report_path = HTMLReport().generate(result, out_file="ui/web/static/report.html")
 
     return templates.TemplateResponse(
         request,
         "results.html",
-        {"result": result}
+        {"result": result},
+
     )

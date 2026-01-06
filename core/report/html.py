@@ -1,18 +1,18 @@
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
+from pathlib import Path
+from core.report.base import ReportGenerator
 
-def generate_html(scan_result):
-    template = Template("""
-    <h1>VulScanWare Report</h1>
-    <p>Target: {{ target }}</p>
-    {% for v in vulns %}
-      <div>
-        <b>{{ v.vuln_type }}</b><br>
-        URL: {{ v.url }}<br>
-        Payload: {{ v.payload }}
-      </div>
-    {% endfor %}
-    """)
-    return template.render(
-        target=scan_result.target,
-        vulns=scan_result.vulnerabilities
-    )
+
+TEMPLATES_DIR = Path(__file__).parent / "templates"
+
+env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
+
+class HTMLReport(ReportGenerator):
+    def generate(self, scan_result, out_file="report.html"):
+        template = env.get_template("report.html")
+        html = template.render(result=scan_result)
+
+        with open(out_file, "w", encoding="utf-8") as f:
+            f.write(html)
+
+        return out_file
