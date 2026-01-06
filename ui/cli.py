@@ -4,6 +4,9 @@ from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from engine import ScanEngine
 from core.report.html import HTMLReport
+import sys
+from core.report.json_report import JSONReport
+from core.report.sarif import SARIFReport
 
 
 app = typer.Typer(add_completion=False)
@@ -15,6 +18,8 @@ def scan(
     dom: bool = False,
     report: bool = False,
     offline: bool = False,
+    format: str = "html",
+    ci: bool = False,
 ):
     ai = None
     if offline:
@@ -26,6 +31,20 @@ def scan(
 
     engine = ScanEngine(dom=dom, ai=ai)
     result = engine.run(target)
+
+    if format == "json":
+        JSONReport().generate(result)
+    elif format == "sarif":
+        SARIFReport().generate(result)
+
+    if ci:
+        severities = {v.severity for v in result.vulnerabilities}
+        if "high" in severities:
+            sys.exit(2)
+        elif severities:
+            sys.exit(1)
+        else:
+            sys.exit(0)
 
     if report:
         path = HTMLReport().generate(result)
