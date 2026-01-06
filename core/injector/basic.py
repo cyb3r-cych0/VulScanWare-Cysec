@@ -1,15 +1,11 @@
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 import requests
 from bs4 import BeautifulSoup
+from core.payloads.registry import get_payloads
 
-DEFAULT_PAYLOADS = [
-    "<script>alert(1)</script>",
-    "\"><img src=x onerror=alert(1)>"
-]
 
 class BasicInjector:
-    def __init__(self, payloads=None, timeout=5):
-        self.payloads = payloads or DEFAULT_PAYLOADS
+    def __init__(self, timeout=5):
         self.timeout = timeout
 
     def inject(self, url: str):
@@ -20,7 +16,9 @@ class BasicInjector:
         params = parse_qs(parsed.query)
 
         for param in params:
-            for payload in self.payloads:
+            for payload_obj in get_payloads():
+                payload = payload_obj["payload"]
+
                 new_params = params.copy()
                 new_params[param] = payload
 
@@ -53,7 +51,9 @@ class BasicInjector:
             fields = [i.get("name") for i in inputs if i.get("name")]
 
             for field in fields:
-                for payload in self.payloads:
+                for payload_obj in get_payloads():
+                    payload = payload_obj["payload"]
+
                     data = {f: "test" for f in fields}
                     data[field] = payload
 

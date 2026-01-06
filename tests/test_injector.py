@@ -16,14 +16,11 @@ def test_injector_generates_get_and_form_payloads(monkeypatch):
     import requests
     monkeypatch.setattr(requests, "get", fake_get)
 
-    injector = BasicInjector(payloads=["XSS"])
+    injector = BasicInjector()
     injections = injector.inject("http://example.com/?q=1")
 
-    # GET injection
     assert any(i["method"] == "GET" for i in injections)
-
-    # FORM injection
     assert any(i["method"] == "POST" for i in injections)
 
-    # Payload present
-    assert any(i["payload"] == "XSS" for i in injections)
+    # payloads now come from registry
+    assert any("payload" in i for i in injections)
