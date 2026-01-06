@@ -9,6 +9,8 @@
     <p><b>Target:</b> {{ result.target }}</p>
     <p><b>Scanned URLs:</b> {{ result.scanned_urls }}</p>
     <p><b>Findings:</b> {{ result.vulnerabilities | length }}</p>
+    <a href="/static/report.html" target="_blank">Download Report</a>
+
 
     {% if result.vulnerabilities %}
     <table border="1" cellpadding="5">

@@ -3,14 +3,24 @@ from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from engine import ScanEngine
+from core.report.html import HTMLReport
+
 
 app = typer.Typer(add_completion=False)
 console = Console()
 
 @app.command()
-def scan(target: str = "http://example.com", dom: bool = False):
+def scan(
+    target: str = "http://example.com",
+    dom: bool = False,
+    report: bool = False
+):
     engine = ScanEngine(dom=dom)
     result = engine.run(target)
+
+    if report:
+        path = HTMLReport().generate(result)
+        console.print(f"[green]Report generated:[/] {path}")
 
     with Progress(
         SpinnerColumn(),

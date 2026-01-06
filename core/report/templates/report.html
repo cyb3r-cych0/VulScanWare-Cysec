@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VulScanWare Report</title>
+    <style>
+      body { font-family: Arial; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ccc; padding: 8px; }
+      th { background: #f4f4f4; }
+      .high { color: red; }
+    </style>
+  </head>
+  <body>
+
+  <h1>VulScanWare XSS Report</h1>
+
+  <p><b>Target:</b> {{ result.target }}</p>
+  <p><b>Scanned URLs:</b> {{ result.scanned_urls }}</p>
+  <p><b>Findings:</b> {{ result.vulnerabilities | length }}</p>
+
+  {% if result.vulnerabilities %}
+  <table>
+  <tr>
+    <th>Type</th>
+    <th>Method</th>
+    <th>Parameter</th>
+    <th>Payload</th>
+    <th>Evidence</th>
+    <th>AI Fix</th>
+  </tr>
+  {% for v in result.vulnerabilities %}
+  <tr>
+    <td class="high">{{ v.vuln_type }}</td>
+    <td>{{ v.method }}</td>
+    <td>{{ v.parameter }}</td>
+    <td><pre>{{ v.payload }}</pre></td>
+    <td>{{ v.evidence }}</td>
+    <td>{{ v.ai_fix or "N/A" }}</td>
+  </tr>
+  {% endfor %}
+  </table>
+  {% else %}
+  <p>No vulnerabilities found.</p>
+  {% endif %}
+
+  </body>
+</html>
