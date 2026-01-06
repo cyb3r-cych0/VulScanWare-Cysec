@@ -1,15 +1,36 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from engine import ScanEngine
 
-app = FastAPI(title="VulScanWare")
+app = FastAPI(title="VulScanWare Web")
+templates = Jinja2Templates(directory="ui/web/templates")
 
+# ---------- API ----------
 class ScanRequest(BaseModel):
     target: str
-    offline: bool = True
 
-@app.post("/scan")
-def start_scan(req: ScanRequest):
+@app.post("/api/scan")
+def api_scan(req: ScanRequest):
     engine = ScanEngine()
-    result = engine.run(req.target)
-    return result
+    return engine.run(req.target)
+
+# ---------- WEB ----------
+@app.get("/", response_class=HTMLResponse)
+def index(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "index.html"
+    )
+
+@app.post("/scan", response_class=HTMLResponse)
+def web_scan(request: Request, target: str = Form(...)):
+    engine = ScanEngine()
+    result = engine.run(target)
+
+    return templates.TemplateResponse(
+        request,
+        "results.html",
+        {"result": result}
+    )
