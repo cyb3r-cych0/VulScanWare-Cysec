@@ -23,7 +23,9 @@ class ScanEngine:
         self.ai_cache = AICache() if ai else None
 
     def run(self, target: str):
+        print(f"[+] Crawling {target}")
         urls = self.crawler.crawl(target)
+        print(f"[+] Crawled {len(urls)} URLs")
         vulns = []
 
         dom_detector = None

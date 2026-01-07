@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from engine import ScanEngine
+from core.engine import ScanEngine
 from core.report.html import HTMLReport
 
 

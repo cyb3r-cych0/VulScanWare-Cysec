@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
 class BasicCrawler:
-    def __init__(self, timeout=5, max_pages=100):
+    def __init__(self, timeout=5, max_pages=25):
         self.timeout = timeout
         self.max_pages = max_pages
 

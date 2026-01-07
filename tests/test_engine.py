@@ -3,7 +3,7 @@
     No UI coupling
     Deterministic behavior
 """
-from engine import ScanEngine
+from core.engine import ScanEngine
 from core.models import Vulnerability
 
 class FakeCrawler:
