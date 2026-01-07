@@ -4,9 +4,19 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.table import Table
 from core.engine import ScanEngine
+from ui.tui.app import run_tui
+
 
 app = typer.Typer(add_completion=False)
 console = Console()
+
+@app.command()
+def tui(
+    target: str,
+    url_limit: int = 25,
+    ai_limit: int = 3,
+):
+    run_tui(target, url_limit, ai_limit)
 
 @app.command()
 def scan(
