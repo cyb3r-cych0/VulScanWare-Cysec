@@ -12,8 +12,17 @@ console = Console()
 def scan(
     target: str = typer.Argument(..., help="Target URL"),
     offline: bool = typer.Option(False, help="Use offline AI remediation"),
+    url_limit: int = typer.Option(
+        25,
+        help="Maximum number of URLs to crawl",
+    ),
+    ai_limit: int = typer.Option(
+        3,
+        help="Maximum number of vulnerabilities to analyze with AI (0 disables AI)",
+    ),
     report: bool = typer.Option(False, help="Generate HTML report"),
 ):
+
     console.print(
         Panel.fit(
             "[bold cyan]VulScanWare[/bold cyan]\n"
@@ -24,15 +33,21 @@ def scan(
 
     console.print(f"[bold]Target:[/bold] [yellow]{target}[/yellow]\n")
 
-    engine = ScanEngine()
+    engine = ScanEngine(url_limit=url_limit)
 
     # ---- CRAWLING ----
     console.print("[bold blue][*][/bold blue] Crawling target…")
 
-    urls = engine.crawler.crawl(target)
+    discovered_urls = []
 
-    for u in urls:
-        console.print(f"    [dim]├─ Discovered:[/dim] {u}")
+    def on_discover(url):
+        discovered_urls.append(url)
+        console.print(f"    [dim]├─ Discovered:[/dim] {url}")
+
+    urls = engine.crawler.crawl(
+        target,
+        on_discover=on_discover
+    )
 
     console.print(
         f"[bold green][✓][/bold green] Crawling complete "
@@ -75,23 +90,53 @@ def scan(
     )
 
     # ---- AI REMEDIATION ----
-    if offline and vulnerabilities:
-        console.print("[bold blue][*][/bold blue] Generating AI remediation…")
+    if offline and vulnerabilities and ai_limit != 0:
+        console.print(
+            f"[bold blue][*][/bold blue] Generating AI remediation "
+            f"(showing first {min(ai_limit, len(vulnerabilities))} findings)…\n"
+        )
 
         from core.ai.llm_loader import load_llm
         from core.ai.offline import OfflineAIAdvisor
         from core.ai.prompt import build_prompt
+        from core.ai.cache import AICache
 
-        llm = load_llm("models/mistral-7b-instruct.Q4_K_M.gguf")
+        llm = load_llm("models/mistral-7b-instruct-v0.1.Q4_K_M.gguf")
         ai = OfflineAIAdvisor(llm)
+        cache = AICache()
 
-        for v in vulnerabilities:
+        for i, v in enumerate(vulnerabilities):
+            if i >= ai_limit:
+                break
+
+            prompt = build_prompt(v)
+            cached = cache.get(prompt)
+
             console.print(
-                f"    [cyan]•[/cyan] {v.vuln_type} → AI advice"
+                f"    [cyan]•[/cyan] {v.vuln_type}\n"
+                f"      URL: {v.url}\n"
+                f"      Parameter: {v.parameter}"
             )
-            v.ai_fix = ai.generate_fix(build_prompt(v))
 
-        console.print("[bold green][✓][/bold green] AI analysis complete\n")
+            if cached:
+                v.ai_fix = cached
+            else:
+                v.ai_fix = ai.generate_fix(prompt)
+                cache.set(prompt, v.ai_fix)
+
+            console.print(
+                f"      [dim]└─ Recommendation:[/dim]\n"
+                f"         {v.ai_fix}\n"
+            )
+
+        remaining = len(vulnerabilities) - ai_limit
+        if remaining > 0:
+            console.print(
+                f"[dim]… {remaining} additional findings skipped "
+                f"(increase --ai-limit to analyze more)[/dim]\n"
+            )
+
+        console.print("[bold green][✓][/bold green] AI remediation complete\n")
 
     # ---- SUMMARY ----
     table = Table(title="Findings Summary", show_lines=True)
