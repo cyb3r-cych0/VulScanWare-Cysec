@@ -4,7 +4,7 @@ class FakeResponse:
     headers = {"Content-Type": "text/html"}
     text = '<a href="/page1">p1</a><a href="/page2">p2</a>'
 
-def fake_get(url, timeout):
+def fake_get(url, timeout, allow_redirects):
     return FakeResponse()
 
 def test_crawler_internal_links(monkeypatch):

@@ -14,8 +14,9 @@ class ScanEngine:
             detector=None,
             ai=None,
             dom=False,
+            url_limit: int = 25,
     ):
-        self.crawler = crawler or BasicCrawler()
+        self.crawler = crawler or BasicCrawler(max_pages=url_limit)
         self.injector = injector or BasicInjector()
         self.detector = detector or ReflectedXSSDetector()
         self.dom = dom
@@ -23,9 +24,7 @@ class ScanEngine:
         self.ai_cache = AICache() if ai else None
 
     def run(self, target: str):
-        print(f"[+] Crawling {target}")
         urls = self.crawler.crawl(target)
-        print(f"[+] Crawled {len(urls)} URLs")
         vulns = []
 
         dom_detector = None

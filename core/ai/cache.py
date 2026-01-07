@@ -4,11 +4,8 @@ class AICache:
     def __init__(self):
         self._cache = {}
 
-    def key(self, context: dict) -> str:
-        return hashlib.sha256(str(context).encode()).hexdigest()
+    def get(self, prompt: str):
+        return self._cache.get(hashlib.sha256(prompt.encode()).hexdigest())
 
-    def get(self, context: dict):
-        return self._cache.get(self.key(context))
-
-    def set(self, context: dict, value: str):
-        self._cache[self.key(context)] = value
+    def set(self, prompt: str, value: str):
+        self._cache[hashlib.sha256(prompt.encode()).hexdigest()] = value

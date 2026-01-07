@@ -1,21 +1,29 @@
-from core.ai.base import AIAdvisor
+from core.ai.offline import OfflineAIAdvisor
+from core.ai.prompt import build_prompt
 from core.models import Vulnerability
 
-class FakeAI(AIAdvisor):
-    def generate_fix(self, context):
-        return "Escape output and use CSP."
+class FakeLLM:
+    def __call__(self, prompt, **kwargs):
+        return {
+            "choices": [
+                {"text": "Escape output and validate input."}
+            ]
+        }
 
-def test_ai_integration():
+def test_offline_ai_generates_fix():
     vuln = Vulnerability(
         vuln_type="Reflected XSS",
-        url="http://x",
+        url="http://test/search.php",
         parameter="q",
         method="GET",
-        payload="<script>",
-        evidence="reflected"
+        payload="<script>alert(1)</script>",
+        evidence="Payload reflected",
     )
 
-    ai = FakeAI()
-    fix = ai.generate_fix({"vuln": "xss"})
+    llm = FakeLLM()
+    ai = OfflineAIAdvisor(llm)
+
+    prompt = build_prompt(vuln)
+    fix = ai.generate_fix(prompt)
 
     assert "Escape" in fix
