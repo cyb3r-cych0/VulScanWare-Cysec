@@ -5,6 +5,17 @@ from ui.web.app import app
 client = TestClient(app)
 
 def test_scan_endpoint():
-    r = client.post("/api/scan", json={"target": "http://example.com"})
+    r = client.post(
+        "/start",
+        params={
+            "target": "http://example.com",
+            "url_limit": 5,
+            "ai_limit": 0,
+        },
+    )
     assert r.status_code == 200
-    assert "target" in r.json()
+
+def test_status_endpoint():
+    r = client.get("/status")
+    assert r.status_code == 200
+    assert "phase" in r.json()

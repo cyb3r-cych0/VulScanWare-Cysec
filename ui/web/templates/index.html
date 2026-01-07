@@ -1,19 +1,301 @@
 <!DOCTYPE html>
-<html lang="">
-<head>
-    <title>VulScanWare</title>
-</head>
-    <body>
-        <h1>VulScanWare – XSS Scanner</h1>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>VulScanWare</title>
+    <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+    }
+    header {
+      padding: 16px 24px;
+      background: #020617;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    main {
+      padding: 20px;
+    }
+    .card {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      background: #020617;
+      border: 1px solid #334155;
+      color: #e5e7eb;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 12px;
+      padding: 10px 16px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #334155;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
 
-        <form method="post" action="/scan">
-            <label>Target URL:</label><br>
-                <input type="text" name="target" placeholder="http://example.com" required>
-                <br><br>
-            <button type="submit">Start Scan</button>
-            <label>
-              <input type="checkbox" name="dom"> Enable DOM XSS
-            </label>
-        </form>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border-bottom: 1px solid #1e293b;
+      padding: 6px;
+      vertical-align: top;
+    }
+    th {
+      text-align: left;
+      color: #93c5fd;
+    }
+    .phase {
+      font-weight: bold;
+      color: #22c55e;
+    }
+    pre {
+      white-space: pre-wrap;
+      font-size: 12px;
+    }
+    .small {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .phase-crawling { color: #38bdf8; }
+    .phase-scanning { color: #facc15; }
+    .phase-ai { color: #a78bfa; }
+    .phase-done { color: #22c55e; }
+    .phase-stopped { color: #ef4444; }
+
+    #spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    details summary {
+    cursor: pointer;
+    color: #60a5fa;
+    }
+
+    details pre {
+    margin-top: 6px;
+    }
+
+    .sev-high {
+      color: #ef4444;
+      font-weight: bold;
+    }
+    .sev-medium {
+      color: #facc15;
+    }
+    .sev-low {
+      color: #22c55e;
+    }
+    </style>
+    </head>
+
+    <body>
+    <header>VulScanWare – Web UI</header>
+
+    <main>
+
+    <!-- Controls -->
+    <div class="card">
+      <h3>Scan Configuration</h3>
+
+      <label>Target URL
+        <input id="target" placeholder="http://example.com/app">
+      </label>
+
+      <label>URL Crawl Limit
+        <input id="urlLimit" type="number" value="25">
+      </label>
+
+      <label>AI Remediation Limit
+        <input id="aiLimit" type="number" value="2">
+      </label>
+
+      <button id="startBtn" onclick="startScan()">Start Scan</button>
+      <button onclick="stopScan()" style="background:#dc2626">Stop</button>
+        <button onclick="window.location='/report/html'">Download HTML Report</button>
+
+      <span id="phase" class="small"></span>
+    </div>
+
+        <div id="progress" class="small" style="display:none;">
+          <span id="spinner">⭕</span>
+          <span id="progressText">Working…</span>
+        </div>
+
+
+    <!-- Summary -->
+    <div class="card">
+      <h3>Scan Summary</h3>
+      <div id="summary" class="small">Waiting…</div>
+    </div>
+
+    <!-- Results -->
+    <div class="grid">
+
+      <div class="card">
+        <h3>Crawled URLs</h3>
+        <table id="urlsTable">
+          <thead><tr><th>URL</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Vulnerabilities</h3>
+        <table id="vulnsTable">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Parameter</th>
+              <th>AI Remediation</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    </main>
+
+    <script>
+        let polling = null;
+
+        const phase = document.getElementById("phase");
+        const summary = document.getElementById("summary");
+        const urlsTable = document.getElementById("urlsTable");
+        const vulnsTable = document.getElementById("vulnsTable");
+        const startBtn = document.getElementById("startBtn");
+
+        function startScan() {
+          const targetEl = document.getElementById("target");
+          const urlLimitEl = document.getElementById("urlLimit");
+          const aiLimitEl = document.getElementById("aiLimit");
+
+          // immediate UI reset
+          phase.textContent = "Phase: starting";
+          summary.textContent = "Starting scan…";
+
+          urlsTable.querySelector("tbody").innerHTML = "";
+          vulnsTable.querySelector("tbody").innerHTML = "";
+
+          startBtn.disabled = true;
+
+          if (polling) clearInterval(polling);
+
+          fetch(
+            `/start?target=${encodeURIComponent(targetEl.value)}&url_limit=${urlLimitEl.value}&ai_limit=${aiLimitEl.value}`,
+            { method: "POST" }
+          );
+
+          polling = setInterval(updateStatus, 1000);
+        }
+
+        function stopScan() {
+          fetch("/stop", { method: "POST" });
+        }
+
+        async function updateStatus() {
+          const r = await fetch("/status");
+          const d = await r.json();
+
+          phase.textContent = "Phase: " + d.phase;
+          phase.className = "phase phase-" + d.phase;
+
+          const progress = document.getElementById("progress");
+          const progressText = document.getElementById("progressText");
+
+          if (progress && progressText) {
+            if (["starting", "crawling", "scanning", "ai"].includes(d.phase)) {
+              progress.style.display = "block";
+
+              if (d.phase === "starting") progressText.textContent = "Initializing scan…";
+              if (d.phase === "crawling") progressText.textContent = "Crawling target…";
+              if (d.phase === "scanning") progressText.textContent = "Scanning endpoints…";
+              if (d.phase === "ai") progressText.textContent = "Generating AI remediation…";
+            } else {
+              progress.style.display = "none";
+            }
+          }
+
+          summary.textContent =
+            `URLs Crawled: ${d.summary.urls_crawled} | ` +
+            `Vulnerabilities: ${d.summary.vulns_found} | ` +
+            `AI Done: ${d.summary.ai_done} | ` +
+            `Time: ${d.summary.time_taken ?? "—"}s`;
+
+          // URLs table
+          const ut = urlsTable.querySelector("tbody");
+          ut.innerHTML = "";
+          d.urls.slice(-20).forEach(u => {
+            ut.innerHTML += `<tr><td>${u}</td></tr>`;
+          });
+
+          // Vulnerabilities table
+          const vt = vulnsTable.querySelector("tbody");
+          vt.innerHTML = "";
+          d.vulns.forEach(v => {
+            vt.innerHTML += `
+              <tr>
+                <td class="sev-${v.severity}">${v.type}</td>
+                <td>${v.param} - ${v.url}</td>
+                <td>
+                  ${
+                    v.ai
+                      ? `<details>
+                           <summary>View remediation</summary>
+                           <pre>${v.ai}</pre>
+                         </details>`
+                      : "—"
+                  }
+                </td>
+              </tr>`;
+          });
+
+          if (d.phase === "stopped") {
+            if (progress) progress.style.display = "none";
+            summary.textContent += " (scan stopped)";
+            startBtn.disabled = false;
+            clearInterval(polling);
+          }
+
+          if (d.phase === "done") {
+            startBtn.disabled = false;
+            clearInterval(polling);
+          }
+        }
+    </script>
     </body>
 </html>
