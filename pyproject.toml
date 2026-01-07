@@ -80,8 +80,14 @@ dependencies = [
   "zopfli==0.4.0",
 ]
 
-[tool.setuptools]
-packages = ["core", "ui"]
+[project.optional-dependencies]
+dev = [
+  "pytest==9.0.2"
+]
 
 [project.scripts]
 vulscanware = "ui.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "ui*"]
