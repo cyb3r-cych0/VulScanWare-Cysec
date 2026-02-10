@@ -62,3 +62,18 @@ http://127.0.0.1:8000
 - No separate backend service required
 - Offline LLM (Mistral via llama.cpp) is lazy-loaded
 - CLI/TUI and Web UI work independently
+
+**Screenshots**
+
+![Screenshot 2026-02-03 155310.png](screenshots/Screenshot%202026-02-03%20155310.png)
+![Screenshot 2026-02-04 052047.png](screenshots/Screenshot%202026-02-04%20052047.png)
+![Screenshot 2026-02-04 052056.png](screenshots/Screenshot%202026-02-04%20052056.png)
+![Screenshot 2026-02-04 052141.png](screenshots/Screenshot%202026-02-04%20052141.png)
+![Screenshot 2026-02-04 052153.png](screenshots/Screenshot%202026-02-04%20052153.png)
+![Screenshot 2026-02-04 052204.png](screenshots/Screenshot%202026-02-04%20052204.png)
+![Screenshot 2026-02-04 052226.png](screenshots/Screenshot%202026-02-04%20052226.png)
+![Screenshot 2026-02-04 052259.png](screenshots/Screenshot%202026-02-04%20052259.png)
+![Screenshot 2026-02-04 052313.png](screenshots/Screenshot%202026-02-04%20052313.png)
+![Screenshot 2026-02-04 052442.png](screenshots/Screenshot%202026-02-04%20052442.png)
+![Screenshot 2026-02-04 052625.png](screenshots/Screenshot%202026-02-04%20052625.png)
+![Screenshot 2026-02-04 052700.png](screenshots/Screenshot%202026-02-04%20052700.png)
