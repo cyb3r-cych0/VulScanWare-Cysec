@@ -77,3 +77,5 @@ http://127.0.0.1:8000
 ![Screenshot 2026-02-04 052442.png](screenshots/Screenshot%202026-02-04%20052442.png)
 ![Screenshot 2026-02-04 052625.png](screenshots/Screenshot%202026-02-04%20052625.png)
 ![Screenshot 2026-02-04 052700.png](screenshots/Screenshot%202026-02-04%20052700.png)
+
+Advanced AI-Assisted Security Intelligence Platform

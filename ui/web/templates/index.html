@@ -1,345 +1,1001 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>VulScanWare</title>
-    <style>
-    body {
-      font-family: system-ui, Arial, sans-serif;
-      background: #93c5fd;
-      color: #e5e7eb;
-      margin: 0;
+<head>
+  <meta charset="UTF-8">
+  <title>VulScanWare SOC Console</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+  body {
+    background:#020617;
+    color:#e5e7eb;
+    font-family:Arial;
+    margin:0;
+  }
+  header {
+    padding:20px;
+    background:#0f172a;
+    text-align:center;
+    font-size:28px;
+    color:greenyellow;
+      margin-top: 15px;
+      border-radius: 15px;
+  }
+  .card {
+    background:#0f172a;
+    margin:20px;
+    padding:15px;
+    border-radius:8px;
+  }
+  .grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .metric {
+    font-size:22px;
+  }
+  .red {color:#ef4444;}
+  .orange {color:#f97316;}
+  .yellow {color:#facc15;}
+  .green {color:#22c55e;}
+
+  .feed-entry {
+      padding:6px;
+      margin-bottom:4px;
+      border-left:4px solid #38bdf8;
+      animation: flash 0.6s ease-in-out;
+  }
+
+    @keyframes flash {
+      from { background:#1e293b; }
+      to { background:transparent; }
     }
-    header {
-        padding: 35px 30px;
-        background: #020617;
-        font-size: 50px;
-        font-weight: bold;
-        color: #93c5fd;
-        text-align: center;
-    }
-    main {
-      padding: 20px;
-    }
-    .card {
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 20px;
-        font-size: 20px;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-size: 20px;
-        font-weight: bold;
-    }
-    input {
-      width: 70%;
-      padding: 10px;
-      margin: 10px;
-      background: #020617;
-      border: 2px solid #334155;
-      color: #e5e7eb;
-      border-radius: 8px;
-        border-color: #93c5fd;
-    }
-    button {
-      margin-top: 12px;
-      padding: 10px 40px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-        font-size: 19px;
-    }
-    button:disabled {
-      background: #334155;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 20px;
-    }
-    .grid-button {
-      display: grid;
-      grid-template-columns: 3fr 1fr;
-      gap: 20px;
-    }
-    .dynamic {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0px;
-        margin-top: 10px;
+    canvas {
+      filter: drop-shadow(0 0 10px rgba(0,255,255,0.3));
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 18px;
-    }
-    th, td {
-      border-bottom: 1px solid #1e293b;
-      padding: 6px;
-      vertical-align: top;
-    }
-    th {
-      text-align: left;
-      color: #93c5fd;
-    }
-    .phase {
-      font-weight: bold;
-      color: #22c55e;
-    }
-    pre {
-      white-space: pre-wrap;
-      font-size: 15px;
-    }
-    .small {
-      color: #9ca3af;
-      font-size: 18px;
+    #phaseHeader {
+      transition: background 0.5s ease, box-shadow 0.5s ease;
+        margin-left: 20px;
+        margin-right: 20px;
+        background: #0f172a;
     }
 
-    .phase-crawling { color: #38bdf8; }
-    .phase-scanning { color: #facc15; }
-    .phase-ai { color: #a78bfa; }
-    .phase-done { color: #22c55e; }
-    .phase-stopped { color: #ef4444; }
-
-    #spinner {
-    display: inline-block;
-    animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    details summary {
-    cursor: pointer;
-    color: #60a5fa;
+    .phase-crawling {
+      background:#1e3a8a;
+      box-shadow:0 0 5px #3b82f6;
     }
 
-    details pre {
-    margin-top: 6px;
+    .phase-scanning {
+      background:#78350f;
+      box-shadow:0 0 5px #facc15;
     }
 
-    .sev-high {
-      color: #ef4444;
-      font-weight: bold;
+    .phase-ai {
+      background:#4c1d95;
+      box-shadow:0 0 5px #a855f7;
     }
-    .sev-medium {
-      color: #facc15;
+
+    .phase-done {
+      background:#14532d;
+      box-shadow:0 0 5px #22c55e;
     }
-    .sev-low {
-      color: #22c55e;
+
+    .spinner {
+      border:3px solid #1e293b;
+      border-top:3px solid #38bdf8;
+      border-radius:50%;
+      width:18px;
+      height:18px;
+      animation:spin 1s linear infinite;
+      display:inline-block;
     }
-    </style>
-    </head>
 
-    <body>
-        <header>&#9886; VulScanWare &nbsp; &#9760; &nbsp; AI‑Powered XSS Scanner&nbsp;&#9887;</header>
+@keyframes spin {
+  100% { transform:rotate(360deg); }
+}
+  </style>
+</head>
 
-    <main>
+<header id="phaseHeader">
+  VulScanWare – Security Intelligence Console
+  <span id="phaseIndicator" style="margin-left:20px;font-size:20px;"></span>
+</header>
 
-    <!-- Controls -->
+<body class="bg-gray-950 text-gray-200 font-mono selection:bg-cyan-500 mt-0">
+
+<div class="p-8 max-w-8xl mx-auto">
+
+<!--  INPUT -->
+<div class="card d-flex flex-column align-items-center justify-content-center text-center mt-0">
+    <div class="flex gap-4 mb-3 mt-3">
+        Target:
+        <input class="bg-gray-800 p-3 rounded-xl" id="target" style="width:50%"
+               type="text"
+               placeholder="Enter website URL (https://example.com)"
+               class="flex-1 p-3 bg-gray-900 rounded border border-gray-700 text-white">
+        Crawl Limit:
+        <input class="bg-gray-800 p-3 rounded-xl" id="urlLimit" type="number" value="25" min="1" style="width:80px">
+
+        AI Limit:
+        <input class="bg-gray-800 p-3 rounded-xl" id="aiLimit" type="number" value="2" min="0" style="width:80px">
+
+        <button id="scanBtn" onclick="handleScan()"
+                class="bg-cyan-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-cyan-100">
+            Scan
+        </button>
+        <button id="stopBtn" onclick="handleStop()"
+                class="bg-red-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-red-100">
+            Stop
+        </button>
+        <button id="aiBtn" onclick="openAISection()" disabled
+                class="bg-green-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-green-100">
+            AI
+        </button>
+    </div>
+</div>
+
+<div style="margin-left:20px;margin-bottom: 10px">Progress</div>
+    <div style="background:#1e293b;height:12px;border-radius:6px;margin-left: 20px;margin-right:20px;">
+    <div id="progressBar" style="height:12px;width:0%;background:#38bdf8;border-radius:6px;transition:width 0.4s;"></div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="card d-flex flex-column align-items-center justify-content-center text-center">
+    <div class="grid grid-cols-4 gap-6 mb-2 mt-2">
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>Status</h2>
+            <p id="status" class="text-2xl text-cyan-400">Idle</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>Links</h2>
+            <p id="totalLinks" class="text-2xl text-pink-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>Threat Index</h2>
+            <p id="threatIndex" class="text-2xl text-red-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>Time Taken</h2>
+            <p id="timeTaken" class="text-2xl text-cyan-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>Critical</h2>
+            <p id="critCount" class="text-2xl text-red-500">0</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>High</h2>
+            <p id="highCount" class="text-2xl text-orange-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>Medium</h2>
+            <p id="medCount" class="text-2xl text-yellow-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded-xl">
+            <h2>Low</h2>
+            <p id="lowCount" class="text-2xl text-green-400">0</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-3">
     <div class="card">
-      <h3 style="color: #38bdf8" > &#9881; &nbsp; Scan Configuration</h3>
+      <h3>Attack Density (Vulns / Second)</h3>
+      <canvas id="densityChart"></canvas>
+    </div>
+  <div class="card">
+      <h3>Live Attack Timeline</h3>
+      <canvas id="timelineChart"></canvas>
+    </div>
+  <div class="card">
+    <h3>Severity Distribution</h3>
+    <canvas id="severityChart"></canvas>
+  </div>
+</div>
 
-        <div class="grid-button">
-          <label>Target URL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input id="target" placeholder="http://example.com/app">
-          </label>
-            <button id="startBtn" onclick="startScan()" style="margin: 10px; background: green">Scan</button>
-        </div>
-        <div class="grid-button">
-              <label>URL Crawl Limit
-                <input id="urlLimit" type="number" value="25">
-              </label>
-            <button id="crawlBtn" onclick="startCrawling()" style="background:#dc2626; margin: 10px">Stop</button>
-        </div>
-        <div class="grid-button">
-              <label>AI Rem Limit &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input id="aiLimit" type="number" value="2">
-              </label>
-            <button onclick="window.location='/report/html'" style="margin: 10px">Report</button>
-        </div>
+<div class="grid">
+    <div class="card">
+    <h3>XSS Type Distribution</h3>
+    <canvas id="typeChart"></canvas>
+  </div>
+    <div class="card">
+      <h3>Top Vulnerable Endpoints</h3>
+      <div id="endpointRanking"
+           style="font-family:monospace;font-size:13px;margin-top:10px;">
+      </div>
+    </div>
+</div>
 
-        <div class="dynamic">
-            <span id="phase" class="small"></span>
-            <div id="progress" class="small" style="display:none;">
-              <span id="spinner"> &#10040; &nbsp; </span>
-              <span id="progressText">Working…</span>
+<div class="grid">
+<div class="card">
+        <h3 class="mb-2">Live Vulnerabilities</h3>
+          <div id="vulnFeed"
+             style="
+               max-height:300px;
+               overflow-y:auto;
+               font-family:monospace;
+               font-size:13px;
+               background:#020617;
+               padding:10px;
+               border-radius:6px;
+             ">
+          </div>
+    </div>
+    <div class="card" >
+        <h3>Vulnerability Heatmap</h3>
+        <div id="heatmap"
+           style="display:grid;
+              grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+              gap:10px;
+                max-height:360px;
+               overflow-y:auto;
+               font-family:monospace;
+               font-size:13px;
+               background:#020617;
+               padding:10px;
+               border-radius:6px;
+               margin-top: 10px;
+               margin-bottom: 10px;
+            ">
+        </div>
+    </div>
+</div>
+
+<div class="card" id="aiSection">
+    <h3>AI Remediation Panel</h3>
+    <div id="aiVulnList"
+       style="
+            max-height:500px;
+           overflow-y:auto;
+           font-family:monospace;
+           font-size:13px;
+           background:#020617;
+           padding:10px;
+           border-radius:6px;
+           margin-top: 10px;
+           margin-bottom: 10px;
+        ">
+    </div>
+    <button onclick="generateSelectedAI()"
+        class="bg-green-500 px-6 py-3 mt-2 rounded-xl text-black font-bold hover:bg-green-100">
+        Generate Fix
+    </button>
+
+    <button onclick="generateTop3()"
+        class="bg-cyan-500 px-6 py-3 mt-2 rounded-xl text-black font-bold hover:bg-cyan-100">
+        Generate Top 3
+    </button>
+
+</div>
+
+<div class="grid">
+    <div class="card">
+      <h3>Overall Risk Score</h3>
+      <canvas style="height: 20px; " id="riskDial"></canvas>
+      <div style="text-align:center;font-size:20px;margin-top:10px;">
+        Risk Level: <span id="riskLevel">LOW</span>
+      </div>
+    </div>
+     <div class="card">
+        <h3 class="mb-2">Threat Index</h3>
+        <canvas id="threatGauge"></canvas>
+       <div style="text-align:center;font-size:20px;margin-top:10px;">
+           Threat Level: <span id="threatScore">0</span>
+       </div>
+    </div>
+</div>
+
+</div>
+
+
+<script>
+let socket;
+let typeChart, severityChart;
+let threatGauge;
+let timelineChart;
+let attackTimeline = [];
+let attackLabels = [];
+let scanStartTime = null;
+let riskDial;
+let scanActive = false;
+let densityChart;
+let densityData = [];
+let densityLabels = [];
+let lastVulnCount = 0;
+
+const canvas = document.getElementById("threatGauge");
+canvas.width = 100;  // Internal width in pixels
+canvas.height = 100; // Internal height in pixels
+
+let scanState = "idle"; // idle | running | paused
+
+function fullResetUI(){
+    attackTimeline = [];
+    attackLabels = [];
+    scanStartTime = null;
+    densityData = [];
+    densityLabels = [];
+    lastVulnCount = 0;
+
+    timelineChart.data.labels = [];
+    timelineChart.data.datasets[0].data = [];
+    timelineChart.update();
+
+    densityChart.data.labels = [];
+    densityChart.data.datasets[0].data = [];
+    densityChart.update();
+
+    document.getElementById("vulnFeed").innerHTML = "";
+    document.getElementById("heatmap").innerHTML = "";
+
+    window.renderedVulns = new Set();
+}
+
+function handleScan(){
+    if (scanState === "idle"){
+        startScan();
+        scanState = "running";
+        updateButtons();
+    }
+    else if (scanState === "paused"){
+        fetch("/resume",{method:"POST"});
+        scanState = "running";
+        updateButtons();
+    }
+}
+
+function handleStop(){
+    if (scanState === "running"){
+        fetch("/stop",{method:"POST"});
+        scanState = "paused";
+        updateButtons();
+    }
+    else if (scanState === "paused"){
+        fetch("/reset",{method:"POST"});
+        fullResetUI();
+        scanState = "idle";
+        updateButtons();
+    }
+}
+
+function updateButtons(){
+    const scanBtn = document.getElementById("scanBtn");
+    const stopBtn = document.getElementById("stopBtn");
+
+    if (scanState === "running"){
+        scanBtn.textContent = "Running...";
+        scanBtn.disabled = true;
+        stopBtn.textContent = "Stop";
+    }
+    else if (scanState === "paused"){
+        scanBtn.textContent = "Resume";
+        scanBtn.disabled = false;
+        stopBtn.textContent = "Reset";
+    }
+    else {
+        scanBtn.textContent = "Scan";
+        scanBtn.disabled = false;
+        stopBtn.textContent = "Stop";
+    }
+}
+
+function initThreatGauge(){
+  threatGauge = new Chart(document.getElementById("threatGauge"),{
+    type:"doughnut",
+    data:{
+      labels:["Risk","Safe"],
+      datasets:[{
+        data:[0,100],
+        backgroundColor:["#ef4444","#1e293b"],
+        borderWidth:0
+      }]
+    },
+    options:{
+      responsive:true,
+      cutout:"75%",
+      plugins:{
+        legend:{display:false},
+        tooltip:{enabled:false}
+      },
+      animation:{
+        animateRotate:true,
+        duration:800
+      }
+    }
+  });
+}
+
+initThreatGauge();
+
+function initTimelineChart(){
+  timelineChart = new Chart(document.getElementById("timelineChart"),{
+    type:"line",
+    data:{
+      labels:attackLabels,
+      datasets:[{
+        label:"Vulnerabilities Over Time",
+        data:attackTimeline,
+        borderColor:"#ef4444",
+        backgroundColor:"rgba(239,68,68,0.2)",
+        tension:0.3,
+        fill:true
+      }]
+    },
+    options:{
+      responsive:true,
+      animation:false,
+      scales:{
+        x:{title:{display:true,text:"Seconds"}},
+        y:{title:{display:true,text:"Total Vulnerabilities"}}
+      }
+    }
+  });
+}
+
+initTimelineChart();
+
+function initDensityChart(){
+  densityChart = new Chart(document.getElementById("densityChart"),{
+    type:"line",
+    data:{
+      labels:densityLabels,
+      datasets:[{
+        label:"Vulnerabilities per Second",
+        data:densityData,
+        borderColor:"#38bdf8",
+        backgroundColor:"rgba(56,189,248,0.2)",
+        tension:0.3,
+        fill:true
+      }]
+    },
+    options:{
+      responsive:true,
+      animation:false,
+      scales:{
+        x:{title:{display:true,text:"Seconds"}},
+        y:{title:{display:true,text:"Vulns / Sec"}}
+      }
+    }
+  });
+}
+
+initDensityChart();
+
+function initRiskDial(){
+  riskDial = new Chart(document.getElementById("riskDial"),{
+    type:"doughnut",
+    data:{
+      labels:["Risk","Remaining"],
+      datasets:[{
+        data:[0,100],
+        backgroundColor:["#22c55e","#1e293b"],
+        borderWidth:0
+      }]
+    },
+    options:{
+      responsive:true,
+      cutout:"70%",
+      plugins:{
+        legend:{display:false},
+        tooltip:{enabled:false}
+      },
+      animation:{
+        animateRotate:true,
+        duration:1000
+      }
+    }
+  });
+}
+
+initRiskDial();
+
+function initCharts(){
+  typeChart = new Chart(document.getElementById("typeChart"),{
+    type:"bar",
+    data:{labels:[],datasets:[{label: "XSS Type",data:[],backgroundColor:"#38bdf8"}]},
+    options:{
+        responsive:true,
+        scales:{
+            y:{title:{display:true,text:"Total Links"}}
+        }
+    }
+  });
+
+  severityChart = new Chart(document.getElementById("severityChart"),{
+    type:"bar",
+    data:{
+      labels:["Critical","High","Medium","Low"],
+      datasets:[{
+          label:"Severity Distribution",
+        data:[0,0,0,0],
+        backgroundColor:["#dc2626","#ef4444","#facc15","#22c55e"]
+      }]
+    },
+    options:{
+        responsive:true,
+        scales:{
+            y:{title:{display:true,text:"Total Links"}}
+        }
+    }
+  });
+}
+
+initCharts();
+
+function connectSocket(){
+  socket = new WebSocket("ws://" + location.host + "/ws");
+
+  socket.onmessage = function(event){
+    const data = JSON.parse(event.data);
+
+    const analytics = data.analytics || {};
+    const typeDist = analytics.type_distribution || {};
+    const sevDist = analytics.severity_distribution || {};
+
+    const progressBar = document.getElementById("progressBar");
+    const threatIndex = analytics.threat_index || 0;
+    const aiBtn = document.getElementById("aiBtn");
+
+    aiBtn.disabled = data.phase !== "done";
+    window.currentVulns = data.vulns;
+
+    document.getElementById("threatScore").textContent = threatIndex;
+
+    // Normalize to 0–100 scale for gauge
+    const normalized = Math.min(threatIndex,100);
+
+    threatGauge.data.datasets[0].data = [normalized, 100 - normalized];
+
+    // Dynamic color shift
+    if (normalized > 75){
+      threatGauge.data.datasets[0].backgroundColor[0] = "#dc2626";
+    }
+    else if (normalized > 40){
+      threatGauge.data.datasets[0].backgroundColor[0] = "#facc15";
+    }
+    else{
+      threatGauge.data.datasets[0].backgroundColor[0] = "#22c55e";
+    }
+
+    threatGauge.update();
+
+    if (data.phase === "crawling") {
+      progressBar.style.background = "#38bdf8";
+      progressBar.style.width =
+        Math.min(data.urls.length * 5, 100) + "%";
+    }
+    else if (data.phase === "scanning") {
+      progressBar.style.background = "#facc15";
+      progressBar.style.width =
+        Math.min(data.vulns.length * 10, 100) + "%";
+    }
+    else if (data.phase === "ai") {
+      progressBar.style.background = "#a855f7";
+      progressBar.style.width =
+        Math.min(data.vulns.filter(v=>v.ai).length * 20, 100) + "%";
+    }
+    else {
+      progressBar.style.width = "0%";
+    }
+
+    // Attack Timeline
+    if (data.phase === "crawling" && !scanActive) {
+      scanStartTime = Date.now();
+      scanActive = true;
+    }
+
+    if (scanActive && ["crawling","scanning","ai"].includes(data.phase)) {
+      const secondsElapsed =
+        Math.floor((Date.now() - scanStartTime) / 1000);
+
+      // Prevent duplicate second entries
+      if (attackLabels.length === 0 ||
+          attackLabels[attackLabels.length - 1] !== secondsElapsed) {
+
+        attackLabels.push(secondsElapsed);
+        attackTimeline.push(data.vulns.length);
+
+        timelineChart.data.labels = attackLabels;
+        timelineChart.data.datasets[0].data = attackTimeline;
+        timelineChart.update();
+      }
+    }
+
+    // Freeze when done
+    if (["done","idle","stopped"].includes(data.phase)) {
+      scanActive = false;
+    }
+
+    // ---- Attack Density ----
+    if (scanActive && ["crawling","scanning","ai"].includes(data.phase)) {
+
+      const currentCount = data.vulns.length;
+      const delta = currentCount - lastVulnCount;
+
+      lastVulnCount = currentCount;
+
+      const secondsElapsed =
+        Math.floor((Date.now() - scanStartTime) / 1000);
+
+      if (densityLabels.length === 0 ||
+          densityLabels[densityLabels.length - 1] !== secondsElapsed) {
+
+        densityLabels.push(secondsElapsed);
+        densityData.push(Math.max(delta,0));
+
+        densityChart.data.labels = densityLabels;
+        densityChart.data.datasets[0].data = densityData;
+        densityChart.update();
+      }
+    }
+
+    // Real-Time Phase Transition Feedback
+    const statusEl = document.getElementById("status");
+
+    statusEl.className = "";
+
+    if (data.phase === "crawling") statusEl.classList.add("orange");
+    if (data.phase === "scanning") statusEl.classList.add("yellow");
+    if (data.phase === "ai") statusEl.classList.add("green");
+    if (data.phase === "idle") statusEl.classList.add("green");
+
+    document.getElementById("threatIndex").textContent =
+      analytics.threat_index || 0;
+
+    document.getElementById("critCount").textContent =
+      sevDist.critical || 0;
+
+    document.getElementById("highCount").textContent =
+      sevDist.high || 0;
+
+    document.getElementById("medCount").textContent =
+      sevDist.medium || 0;
+
+    document.getElementById("lowCount").textContent =
+      sevDist.low || 0;
+
+    // Update total links dynamically
+    document.getElementById("totalLinks").textContent = data.urls.length;
+
+    // Update phase/status
+    document.getElementById("status").textContent = data.phase.toUpperCase();
+
+    // Update time taken
+    document.getElementById("timeTaken").textContent =
+      data.elapsed ? data.elapsed + "s" : "0";
+
+    // Update type chart
+    typeChart.data.labels = Object.keys(typeDist);
+    typeChart.data.datasets[0].data = Object.values(typeDist);
+    typeChart.update();
+
+    // Update severity chart
+    severityChart.data.datasets[0].data = [
+      sevDist.critical || 0,
+      sevDist.high || 0,
+      sevDist.medium || 0,
+      sevDist.low || 0
+    ];
+    severityChart.update();
+
+    // Header
+    const header = document.getElementById("phaseHeader");
+    const indicator = document.getElementById("phaseIndicator");
+
+    header.className = "";
+
+    if (data.phase === "crawling") {
+      header.classList.add("phase-crawling");
+      indicator.textContent = "● Crawling";
+    }
+    else if (data.phase === "scanning") {
+      header.classList.add("phase-scanning");
+      indicator.textContent = "● Scanning";
+    }
+    else if (data.phase === "ai") {
+      header.classList.add("phase-ai");
+      indicator.textContent = "● AI Analysis";
+    }
+    else if (data.phase === "done") {
+      header.classList.add("phase-done");
+      indicator.textContent = "● Complete";
+    }
+    else {
+      indicator.textContent = "";
+    }
+
+    // ---------- ENDPOINT RANKING ----------
+    const rankingDiv = document.getElementById("endpointRanking");
+    rankingDiv.innerHTML = "";
+
+    const endpointCounts = {};
+
+    data.vulns.forEach(v => {
+      if (!endpointCounts[v.url]) {
+        endpointCounts[v.url] = 0;
+      }
+      endpointCounts[v.url]++;
+    });
+
+    // Convert to sorted array
+    const sorted = Object.entries(endpointCounts)
+      .sort((a,b) => b[1] - a[1])
+      .slice(0,6); // top 6
+
+    sorted.forEach(([url,count], index) => {
+      const row = document.createElement("div");
+      row.style.padding = "6px";
+      row.style.marginBottom = "4px";
+      row.style.background = "#1e293b";
+      row.style.borderRadius = "4px";
+
+      row.innerHTML = `
+        <b>#${index+1}</b> (${count} issues)
+        <div style="font-size:11px;color:#94a3b8;">${url}</div>
+      `;
+
+      rankingDiv.appendChild(row);
+    });
+
+    /// ---------- HEATMAP ----------
+    const heatmap = document.getElementById("heatmap");
+    heatmap.innerHTML = "";
+
+    // Group vulnerabilities by URL
+    const urlCounts = {};
+    data.vulns.forEach(v=>{
+      if(!urlCounts[v.url]){
+        urlCounts[v.url] = {count:0,severity:0};
+      }
+      urlCounts[v.url].count += 1;
+
+      // Weight severity
+      if(v.severity === "critical") urlCounts[v.url].severity += 4;
+      else if(v.severity === "high") urlCounts[v.url].severity += 3;
+      else if(v.severity === "medium") urlCounts[v.url].severity += 2;
+      else urlCounts[v.url].severity += 1;
+    });
+
+    const riskScore = Math.min(analytics.threat_index || 0, 100);
+
+    // Update dial values
+    riskDial.data.datasets[0].data = [riskScore, 100 - riskScore];
+
+    // Determine risk level & color
+    let level = "LOW";
+    let color = "#22c55e";
+
+    if (riskScore > 75){
+      level = "CRITICAL";
+      color = "#dc2626";
+    }
+    else if (riskScore > 50){
+      level = "HIGH";
+      color = "#ef4444";
+    }
+    else if (riskScore > 25){
+      level = "MEDIUM";
+      color = "#facc15";
+    }
+
+    riskDial.data.datasets[0].backgroundColor[0] = color;
+    riskDial.update();
+
+    document.getElementById("riskLevel").textContent = level;
+    document.getElementById("riskLevel").style.color = color;
+
+    // Render blocks
+    Object.entries(urlCounts).forEach(([url,dataObj])=>{
+
+      const intensity = Math.min(dataObj.severity * 15,100);
+
+      const block = document.createElement("div");
+      block.style.padding = "10px";
+      block.style.borderRadius = "6px";
+      block.style.background =
+        `rgba(239,68,68,${intensity/100})`;
+      block.style.fontSize = "12px";
+      block.style.wordBreak = "break-all";
+
+      block.innerHTML = `
+        <div style="font-weight:bold;">${dataObj.count} issues</div>
+        <div>${url}</div>
+      `;
+
+      heatmap.appendChild(block);
+    });
+
+    // Update vuln list
+    const feed = document.getElementById("vulnFeed");
+
+    // Keep track of already displayed vulnerabilities
+    if (!window.renderedVulns) {
+      window.renderedVulns = new Set();
+    }
+
+    data.vulns.forEach(v => {
+      const key = v.url + "|" + v.param + "|" + v.type;
+
+      if (!window.renderedVulns.has(key)) {
+        window.renderedVulns.add(key);
+
+        const entry = document.createElement("div");
+        entry.className = "feed-entry";
+
+        entry.style.borderLeftColor =
+          v.severity === "critical" ? "#dc2626" :
+          v.severity === "high" ? "#ef4444" :
+          v.severity === "medium" ? "#facc15" :
+          "#22c55e";
+
+        entry.innerHTML = `
+          <b>[${v.severity.toUpperCase()}]</b>
+          ${v.type} →
+          ${v.url}
+        `;
+
+        feed.appendChild(entry);
+
+        // Auto-scroll
+        feed.scrollTop = feed.scrollHeight;
+      }
+    });
+  };
+}
+
+connectSocket();
+
+function startScan(){
+  const target = document.getElementById("target").value;
+  const urlLimit = document.getElementById("urlLimit").value;
+  const aiLimit = document.getElementById("aiLimit").value;
+
+  fetch(
+    `/start?target=${encodeURIComponent(target)}&url_limit=${urlLimit}&ai_limit=${aiLimit}`,
+    {method:"POST"}
+  );
+
+  // Reset timeline
+  scanActive = false;
+  scanStartTime = null;
+  attackTimeline = [];
+  attackLabels = [];
+
+  if (timelineChart){
+    timelineChart.data.labels = [];
+    timelineChart.data.datasets[0].data = [];
+    timelineChart.update();
+  }
+
+  densityData = [];
+  densityLabels = [];
+  lastVulnCount = 0;
+
+  if (densityChart){
+      densityChart.data.labels = [];
+      densityChart.data.datasets[0].data = [];
+      densityChart.update();
+  }
+
+  // Reset rendered feed cache
+  window.renderedVulns = new Set();
+
+  // Reconnect WebSocket
+  if (socket) socket.close();
+  connectSocket();
+}
+
+function openAISection(){
+    document.getElementById("aiSection").style.display = "block";
+    document.getElementById("aiSection")
+        .scrollIntoView({behavior:"smooth"});
+    renderAIList();
+}
+
+function renderAIList(){
+    const container = document.getElementById("aiVulnList");
+    container.innerHTML = "";
+
+    window.currentVulns.forEach((v, index)=>{
+        const row = document.createElement("div");
+        row.style.marginBottom = "12px";
+        row.style.padding = "10px";
+        row.style.background = "#1e293b";
+        row.style.borderRadius = "6px";
+
+        row.innerHTML = `
+            <div style="display:flex;justify-content:space-between;">
+                <div>
+                    <input type="checkbox" value="${index}">
+                    <b>${v.url}</b>
+                    (${v.param}) - ${v.severity}
+                </div>
+                <button onclick="generateSingleAI(${index})">
+                    Generate
+                </button>
             </div>
-        </div>
-    </div>
+            <div id="aiResult-${index}"
+                 style="margin-top:8px;font-size:13px;color:#94a3b8;">
+                 ${v.ai_fix ? v.ai_fix : ""}
+            </div>
+        `;
 
+        container.appendChild(row);
+    });
+}
 
+function showSpinner(){
+    const panel = document.getElementById("aiSection");
+    panel.insertAdjacentHTML(
+        "beforeend",
+        `<div id="aiSpinner" class="spinner"></div>`
+    );
+}
 
-    <!-- Summary -->
-    <div class="card">
-      <h3 style="color: aquamarine" > &#9776; &nbsp; Scan Summary</h3>
-      <div id="summary" class="small" style="color: #22c55e">Waiting…</div>
-    </div>
+function hideSpinner(){
+    const s = document.getElementById("aiSpinner");
+    if (s) s.remove();
+}
 
-    <!-- Results -->
-    <div class="grid">
+function generateSingleAI(index){
+    showSpinner();
 
-      <div class="card" style="height: 500px; overflow-y: auto; overflow-x: hidden;">
-        <h3 style="color: darkgoldenrod" >Crawled URLs</h3>
-        <table id="urlsTable">
-          <thead><tr><th>URL</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+    fetch("/generate_ai",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify([index])
+    }).then(res=>res.json())
+      .then(()=>{
+          hideSpinner();
+          renderAIList();
+      });
+}
 
-      <div class="card" style="height: 500px; overflow-y: auto; overflow-x: hidden;">
-        <h3 style="color: coral" >Vulnerabilities</h3>
-        <table id="vulnsTable">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Parameter</th>
-              <th>AI Remediation</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+function generateSelectedAI(){
+    const checkboxes =
+        document.querySelectorAll("#aiVulnList input:checked");
 
-    </div>
+    const selected = Array.from(checkboxes)
+        .map(cb => parseInt(cb.value));
 
-    </main>
+    if (!selected.length) return;
 
-    <script>
-        let polling = null;
+    showSpinner();
 
-        const phase = document.getElementById("phase");
-        const summary = document.getElementById("summary");
-        const urlsTable = document.getElementById("urlsTable");
-        const vulnsTable = document.getElementById("vulnsTable");
-        const startBtn = document.getElementById("startBtn");
-        const crawlBtn = document.getElementById("crawlBtn");
+    fetch("/generate_ai",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(selected)
+    }).then(res=>res.json())
+      .then(()=>{
+          hideSpinner();
+          renderAIList();
+      });
+}
 
-        function startCrawling() {
-            const targetEl = document.getElementById("target");
-            const urlLimitEl = document.getElementById("urlLimit");
+function generateTop3(){
+    const top3 = window.currentVulns
+        .slice(0,3)
+        .map((_,i)=>i);
 
-            phase.textContent = "Phase: starting";
-            phase.textContent = "Starting crawling...";
+    if (!top3.length) return;
 
-            urlsTable.querySelector("tbody").innerHTML = "";
+    showSpinner();
 
-            crawlBtn.disabled = true;
+    fetch("/generate_ai",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(top3)
+    }).then(res=>res.json())
+      .then(data=>{
+        hideSpinner();
+        renderAIList();
+        alert("Tokens used: " + (data.tokens || 0));
+    });
+}
 
-            if (polling) clearInterval(polling);
+</script>
 
-          fetch(
-            `/start?target=${encodeURIComponent(targetEl.value)}&url_limit=${urlLimitEl.value}`,
-            { method: "POST" }
-          );
-
-          polling = setInterval(updateStatus, 1000);
-        }
-
-        function startScan() {
-          const targetEl = document.getElementById("target");
-          const urlLimitEl = document.getElementById("urlLimit");
-          const aiLimitEl = document.getElementById("aiLimit");
-
-          // immediate UI reset
-          phase.textContent = "Phase: starting";
-          summary.textContent = "Starting scan…";
-
-          urlsTable.querySelector("tbody").innerHTML = "";
-          vulnsTable.querySelector("tbody").innerHTML = "";
-
-          startBtn.disabled = true;
-
-          if (polling) clearInterval(polling);
-
-          fetch(
-            `/start?target=${encodeURIComponent(targetEl.value)}&url_limit=${urlLimitEl.value}&ai_limit=${aiLimitEl.value}`,
-            { method: "POST" }
-          );
-
-          polling = setInterval(updateStatus, 1000);
-        }
-
-        function stopScan() {
-          fetch("/stop", { method: "POST" });
-        }
-
-        async function updateStatus() {
-          const r = await fetch("/status");
-          const d = await r.json();
-
-          phase.textContent = "Phase: " + d.phase;
-          phase.className = "phase phase-" + d.phase;
-
-          const progress = document.getElementById("progress");
-          const progressText = document.getElementById("progressText");
-
-          if (progress && progressText) {
-            if (["starting", "crawling", "scanning", "ai"].includes(d.phase)) {
-              progress.style.display = "block";
-
-              if (d.phase === "starting") progressText.textContent = "Initializing scan…";
-              if (d.phase === "crawling") progressText.textContent = "Crawling target…";
-              if (d.phase === "scanning") progressText.textContent = "Scanning endpoints…";
-              if (d.phase === "ai") progressText.textContent = "Generating AI remediation…";
-            } else {
-              progress.style.display = "none";
-            }
-          }
-
-          summary.textContent =
-            `URLs Crawled: ${d.summary.urls_crawled} | ` +
-            `Vulnerabilities: ${d.summary.vulns_found} | ` +
-            `AI Done: ${d.summary.ai_done} | ` +
-            `Time: ${d.summary.time_taken ?? "—"}s`;
-
-          // URLs table
-          const ut = urlsTable.querySelector("tbody");
-          ut.innerHTML = "";
-          d.urls.slice(-20).forEach(u => {
-            ut.innerHTML += `<tr><td>${u}</td></tr>`;
-          });
-
-          // Vulnerabilities table
-          const vt = vulnsTable.querySelector("tbody");
-          vt.innerHTML = "";
-          d.vulns.forEach(v => {
-            vt.innerHTML += `
-              <tr>
-                <td class="sev-${v.severity}">${v.type}</td>
-                <td>${v.param}</td>
-                <td>
-                  ${
-                    v.ai
-                      ? `<details>
-                           <summary>View remediation</summary>
-                           <pre>${v.ai}</pre>
-                         </details>`
-                      : "—"
-                  }
-                </td>
-              </tr>`;
-          });
-
-          if (d.phase === "stopped") {
-            if (progress) progress.style.display = "none";
-            summary.textContent += " (scan stopped)";
-            startBtn.disabled = false;
-            clearInterval(polling);
-          }
-
-          if (d.phase === "done") {
-            startBtn.disabled = false;
-            clearInterval(polling);
-          }
-        }
-    </script>
-    </body>
+</body>
 </html>
