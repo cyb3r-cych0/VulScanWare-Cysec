@@ -2,9 +2,9 @@
 from core.engine import ScanEngine
 import time
 
-def run_scan(state, target, url_limit, ai_limit):
+def run_scan(state, target, url_limit, depth_limit):
     start = time.time()
-    engine = ScanEngine(url_limit=url_limit)
+    engine = ScanEngine(url_limit=url_limit, depth_limit=depth_limit, dom=True)
 
     state.stop = False
     state.paused = False
@@ -51,6 +51,9 @@ def run_scan(state, target, url_limit, ai_limit):
                 state.phase = "idle"
                 return
 
+            # TRACK PAYLOAD FOR STORED XSS
+            engine.stored_tracker.track(inj)
+
             finding = engine.detector.detect(inj)
 
             if finding:
@@ -60,7 +63,23 @@ def run_scan(state, target, url_limit, ai_limit):
                 )
                 state.vulnerabilities.append(finding)
 
+    # ---------------- STORED ANALYSIS ----------------
+
+    state.phase = "stored-analysis"
+
+    # perform second crawl to detect stored payload rendering
+    stored_urls = engine.crawler.crawl(target)
+
+    # combine previously crawled + new pages
+    all_urls = list(set(urls + stored_urls))
+
+    stored_findings = engine.stored_tracker.check_pages(all_urls)
+
+    for v in stored_findings:
+        state.vulnerabilities.append(v)
+
     # ---------------- COMPLETE ----------------
+
     if not state.stop:
         state.phase = "done"
         state.ai_done = True

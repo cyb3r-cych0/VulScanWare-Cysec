@@ -5,7 +5,7 @@ class OfflineAIAdvisor:
     def generate_fix(self, prompt: str) -> str:
         result = self.llm(
             prompt,
-            max_tokens=180,
+            max_tokens=420,
             temperature=0.0,
             top_p=1.0,
         )

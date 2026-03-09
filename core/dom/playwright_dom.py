@@ -62,6 +62,36 @@ class DomXSSDetector:
                 method=injection.get("method", "GET"),
                 payload=payload,
                 evidence=f"JS sink triggered: {', '.join(set(hits))}",
+                severity="critical"
+            )
+        return None
+
+    def scan_page(self, url):
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+
+            page.add_init_script(JS_HOOKS)
+
+            try:
+                page.goto(url, timeout=self.timeout_ms)
+                page.wait_for_timeout(500)
+                hits = page.evaluate("window.__xss_hits || []")
+            except Exception:
+                browser.close()
+                return None
+
+            browser.close()
+
+        if hits:
+            return Vulnerability(
+                vuln_type="DOM XSS",
+                url=url,
+                parameter="",
+                method="GET",
+                payload="DOM-SCAN",
+                evidence=f"JS sink triggered: {', '.join(set(hits))}",
                 severity="high"
             )
+
         return None

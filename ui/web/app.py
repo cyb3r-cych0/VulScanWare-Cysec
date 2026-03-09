@@ -11,6 +11,8 @@ from core.ai.prompt import build_prompt
 from core.ai.offline import OfflineAIAdvisor
 from core.ai.llm_loader import load_llm
 from core.ai.cache import AICache
+import time
+from core.analysis.clustering import cluster_vulnerabilities
 
 app = FastAPI()
 BASE_DIR = Path(__file__).resolve().parent
@@ -40,7 +42,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 async def send_status_update(websocket: WebSocket):
     type_dist = Counter(v.vuln_type for v in web_state.vulnerabilities)
-    severity_dist = Counter(getattr(v, "severity", "medium") for v in web_state.vulnerabilities)
+    severity_dist = Counter(getattr(v, "severity", None) for v in web_state.vulnerabilities)
 
     threat_index = (
         severity_dist.get("critical", 0) * 4 +
@@ -57,8 +59,10 @@ async def send_status_update(websocket: WebSocket):
                 "type": v.vuln_type,
                 "url": v.url,
                 "param": v.parameter,
-                "ai": getattr(v, "ai_fix", None),
-                "severity": getattr(v, "severity", "medium"),
+                "ai_fix": getattr(v, "ai_fix", None),
+                "ai_prompt": getattr(v, "ai_prompt", None),
+                "severity": getattr(v, "severity", None),
+                "ai_time": getattr(v, "ai_time", None),
             }
             for v in web_state.vulnerabilities
         ],
@@ -84,7 +88,7 @@ def reset_state(state):
 
 
 @app.post("/start")
-def start(target: str, url_limit: int = 25, ai_limit: int = 2):
+def start(target: str, url_limit: int = 25, depth_limit: int = 2):
     global scan_thread
 
     if scan_thread and scan_thread.is_alive():
@@ -94,7 +98,7 @@ def start(target: str, url_limit: int = 25, ai_limit: int = 2):
 
     scan_thread = threading.Thread(
         target=run_scan,
-        args=(web_state, target, url_limit, ai_limit),
+        args=(web_state, target, url_limit, depth_limit),
         daemon=True
     )
     scan_thread.start()
@@ -134,48 +138,41 @@ def reset_scan():
 
 @app.post("/generate_ai")
 def generate_ai(selected_ids: list[int]):
-    if not web_state.vulnerabilities:
-        return {"status": "no vulnerabilities"}
-
-    llm = load_llm("models/mistral-7b-instruct-v0.1.Q4_K_M.gguf")
-    ai = OfflineAIAdvisor(llm)
-    cache = AICache()
-
-    for idx in selected_ids:
-        if idx < len(web_state.vulnerabilities):
-            v = web_state.vulnerabilities[idx]
-            prompt = build_prompt(v)
-            v.ai_fix = cache.get(prompt) or ai.generate_fix(prompt)
-            cache.set(prompt, v.ai_fix)
-
-    return {"status": "done"}
-
-
-@app.post("/generate_ai")
-def generate_ai(selected_ids: list[int]):
     total_tokens = 0
 
     llm = load_llm("models/mistral-7b-instruct-v0.1.Q4_K_M.gguf")
     ai = OfflineAIAdvisor(llm)
     cache = AICache()
 
-    for idx in selected_ids:
-        if idx < len(web_state.vulnerabilities):
-            v = web_state.vulnerabilities[idx]
-            prompt = build_prompt(v)
+    clusters = cluster_vulnerabilities(web_state.vulnerabilities)
 
-            cached = cache.get(prompt)
-            if cached:
-                v.ai_fix = cached
-            else:
-                result = ai.generate_fix(prompt)
-                v.ai_fix = result
-                cache.set(prompt, result)
+    for cluster_key, vulns in clusters.items():
 
-                # approximate token usage
-                total_tokens += len(prompt.split()) + len(result.split())
+        v = vulns[0]  # representative vulnerability
+        prompt = build_prompt(v)
 
-    return {"status":"done","tokens":total_tokens}
+        cached = cache.get(v)
+
+        if cached:
+            response_text = cached
+            duration = "⚡ Cached result"  # cached results are instant
+        else:
+            start = time.time()
+
+            response_text = ai.generate_fix(prompt)
+
+            duration = round(time.time() - start, 2)
+
+            cache.set(v, response_text)
+
+        for vuln in vulns:
+            vuln.ai_fix = response_text
+            vuln.ai_time = duration
+
+            # optional token counting
+            # total_tokens += len(prompt.split()) + len(response_text.split())
+
+    return {"status": "done", "tokens": total_tokens}
 
 
 @app.get("/report/html")

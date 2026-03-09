@@ -1,11 +1,31 @@
-def build_prompt(vuln):
+def build_prompt(v):
     return f"""
-            You are a secure coding expert.
+            You are a senior application security engineer.
             
-            Vulnerability type: {vuln.vuln_type}
-            HTTP method: {vuln.method}
-            Parameter: {vuln.parameter}
-            Payload: {vuln.payload}
+            Analyze the following Cross-Site Scripting (XSS) vulnerability and produce a structured remediation report.
             
-            Explain why this is dangerous and give concise remediation steps.
+            Vulnerability Details:
+            URL: {v.url}
+            Parameter: {v.parameter}
+            Payload: {v.payload}
+            Type: {v.vuln_type}
+            
+            Return your answer using EXACTLY the following sections:
+            
+            ### Explanation
+            Explain why this vulnerability is dangerous.
+            
+            ### Impact
+            Describe what an attacker could do.
+            
+            ### Secure Fix
+            Provide specific remediation steps.
+            
+            ### Secure Code Example
+            Show a short secure coding example if applicable.
+            
+            ### Prevention Checklist
+            Provide 3–5 best practices developers should implement.
+            
+            Keep the response concise and security-focused.
             """

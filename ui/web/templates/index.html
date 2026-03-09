@@ -17,7 +17,7 @@
     padding:20px;
     background:#0f172a;
     text-align:center;
-    font-size:28px;
+    font-size:33px;
     color:greenyellow;
       margin-top: 15px;
       border-radius: 15px;
@@ -77,6 +77,11 @@
       box-shadow:0 0 5px #a855f7;
     }
 
+    .phase-stored-analysis {
+      background:#0f766e;
+      box-shadow:0 0 5px #2dd4bf;
+    }
+
     .phase-done {
       background:#14532d;
       box-shadow:0 0 5px #22c55e;
@@ -92,9 +97,19 @@
       display:inline-block;
     }
 
-@keyframes spin {
-  100% { transform:rotate(360deg); }
-}
+    .ai-card{
+      border:1px solid #1e293b;
+      transition:all 0.25s ease;
+    }
+
+    .ai-card:hover{
+      border-color:#38bdf8;
+      box-shadow:0 0 6px rgba(56,189,248,0.4);
+    }
+
+    @keyframes spin {
+      100% { transform:rotate(360deg); }
+    }
   </style>
 </head>
 
@@ -109,17 +124,16 @@
 
 <!--  INPUT -->
 <div class="card d-flex flex-column align-items-center justify-content-center text-center mt-0">
-    <div class="flex gap-4 mb-3 mt-3">
         Target:
-        <input class="bg-gray-800 p-3 rounded-xl" id="target" style="width:50%"
+        <input class="bg-gray-800 p-3 rounded-xl" id="target" style="width:55%"
                type="text"
                placeholder="Enter website URL (https://example.com)"
                class="flex-1 p-3 bg-gray-900 rounded border border-gray-700 text-white">
         Crawl Limit:
         <input class="bg-gray-800 p-3 rounded-xl" id="urlLimit" type="number" value="25" min="1" style="width:80px">
 
-        AI Limit:
-        <input class="bg-gray-800 p-3 rounded-xl" id="aiLimit" type="number" value="2" min="0" style="width:80px">
+        Depth:
+        <input class="bg-gray-800 p-3 rounded-xl" id="depthLimit" type="number" value="2" min="1" style="width:80px">
 
         <button id="scanBtn" onclick="handleScan()"
                 class="bg-cyan-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-cyan-100">
@@ -129,15 +143,10 @@
                 class="bg-red-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-red-100">
             Stop
         </button>
-        <button id="aiBtn" onclick="openAISection()" disabled
-                class="bg-green-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-green-100">
-            AI
-        </button>
-    </div>
 </div>
 
 <div style="margin-left:20px;margin-bottom: 10px">Progress</div>
-    <div style="background:#1e293b;height:12px;border-radius:6px;margin-left: 20px;margin-right:20px;">
+    <div class="shadow-lg shadow-blue-500/20" style="background:#1e293b;height:12px;border-radius:6px;margin-left: 20px;margin-right:20px;">
     <div id="progressBar" style="height:12px;width:0%;background:#38bdf8;border-radius:6px;transition:width 0.4s;"></div>
 </div>
 
@@ -179,40 +188,54 @@
     </div>
 </div>
 
+<div class="card d-flex flex-column align-items-center justify-content-center text-center">
+
 <div class="grid grid-cols-3">
-    <div class="card">
-      <h3>Attack Density (Vulns / Second)</h3>
+<div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
+    <h3>Attack Density (Vulns / Second)</h3>
       <canvas id="densityChart"></canvas>
     </div>
-  <div class="card">
+<div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
+        <h3>Severity Distribution</h3>
+        <canvas id="severityChart"></canvas>
+      </div>
+<div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
       <h3>Live Attack Timeline</h3>
       <canvas id="timelineChart"></canvas>
     </div>
-  <div class="card">
-    <h3>Severity Distribution</h3>
-    <canvas id="severityChart"></canvas>
-  </div>
+</div>
 </div>
 
+<div class="card d-flex flex-column align-items-center justify-content-center">
+
 <div class="grid">
-    <div class="card">
-    <h3>XSS Type Distribution</h3>
-    <canvas id="typeChart"></canvas>
-  </div>
-    <div class="card">
+<div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
+        <h3>XSS Type Distribution</h3>
+        <canvas id="typeChart"></canvas>
+    </div>
+<div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
       <h3>Top Vulnerable Endpoints</h3>
       <div id="endpointRanking"
-           style="font-family:monospace;font-size:13px;margin-top:10px;">
+           style="
+           font-family:monospace;
+           font-size:13px;
+           margin-top:10px;
+           background:#020617;
+           padding:10px;
+           border-radius:10px;
+            ">
       </div>
     </div>
 </div>
+</div>
 
+<div class="card d-flex flex-column align-items-center justify-content-center">
 <div class="grid">
-<div class="card">
+<div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
         <h3 class="mb-2">Live Vulnerabilities</h3>
           <div id="vulnFeed"
              style="
-               max-height:300px;
+               max-height:360px;
                overflow-y:auto;
                font-family:monospace;
                font-size:13px;
@@ -222,7 +245,7 @@
              ">
           </div>
     </div>
-    <div class="card" >
+<div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
         <h3>Vulnerability Heatmap</h3>
         <div id="heatmap"
            style="display:grid;
@@ -241,12 +264,13 @@
         </div>
     </div>
 </div>
+</div>
 
 <div class="card" id="aiSection">
     <h3>AI Remediation Panel</h3>
     <div id="aiVulnList"
        style="
-            max-height:500px;
+            max-height:700px;
            overflow-y:auto;
            font-family:monospace;
            font-size:13px;
@@ -257,16 +281,18 @@
            margin-bottom: 10px;
         ">
     </div>
+    <button id="aiBtn" onclick="openAISection()" disabled
+            class="bg-pink-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-pink-100">
+        Open Panel
+    </button>
     <button onclick="generateSelectedAI()"
         class="bg-green-500 px-6 py-3 mt-2 rounded-xl text-black font-bold hover:bg-green-100">
         Generate Fix
     </button>
-
     <button onclick="generateTop3()"
         class="bg-cyan-500 px-6 py-3 mt-2 rounded-xl text-black font-bold hover:bg-cyan-100">
         Generate Top 3
     </button>
-
 </div>
 
 <div class="grid">
@@ -285,7 +311,6 @@
        </div>
     </div>
 </div>
-
 </div>
 
 
@@ -303,6 +328,8 @@ let densityChart;
 let densityData = [];
 let densityLabels = [];
 let lastVulnCount = 0;
+let scanCompleted = false;
+let collapsedCards = new Set();
 
 const canvas = document.getElementById("threatGauge");
 canvas.width = 100;  // Internal width in pixels
@@ -346,20 +373,28 @@ function handleScan(){
 }
 
 function handleStop(){
+
+    // If running → pause
     if (scanState === "running"){
         fetch("/stop",{method:"POST"});
         scanState = "paused";
-        updateButtons();
+        updateButtons(false);
     }
-    else if (scanState === "paused"){
-        fetch("/reset",{method:"POST"});
-        fullResetUI();
-        scanState = "idle";
-        updateButtons();
+
+    // If paused OR completed → reset
+    else if (scanState === "paused" || scanCompleted){
+
+        fetch("/reset",{method:"POST"})
+        .then(()=>{
+            fullResetUI();
+            scanState = "idle";
+            scanCompleted = false;
+            updateButtons(false);
+        });
     }
 }
 
-function updateButtons(){
+function updateButtons(completed = false){
     const scanBtn = document.getElementById("scanBtn");
     const stopBtn = document.getElementById("stopBtn");
 
@@ -373,10 +408,12 @@ function updateButtons(){
         scanBtn.disabled = false;
         stopBtn.textContent = "Reset";
     }
-    else {
+    else { // idle
         scanBtn.textContent = "Scan";
         scanBtn.disabled = false;
-        stopBtn.textContent = "Stop";
+
+        // If scan just completed → allow reset
+        stopBtn.textContent = completed ? "Reset" : "Stop";
     }
 }
 
@@ -570,6 +607,11 @@ function connectSocket(){
       progressBar.style.width =
         Math.min(data.vulns.length * 10, 100) + "%";
     }
+    else if (data.phase === "stored-analysis") {
+      progressBar.style.background = "#2dd4bf";
+      progressBar.style.width =
+        Math.min(data.vulns.length * 10, 100) + "%";
+    }
     else if (data.phase === "ai") {
       progressBar.style.background = "#a855f7";
       progressBar.style.width =
@@ -693,6 +735,10 @@ function connectSocket(){
       header.classList.add("phase-scanning");
       indicator.textContent = "● Scanning";
     }
+    else if (data.phase === "stored-analysis") {
+      header.classList.add("phase-stored-analysis");
+      indicator.textContent = "● Stored XSS Analysis";
+    }
     else if (data.phase === "ai") {
       header.classList.add("phase-ai");
       indicator.textContent = "● AI Analysis";
@@ -721,7 +767,7 @@ function connectSocket(){
     // Convert to sorted array
     const sorted = Object.entries(endpointCounts)
       .sort((a,b) => b[1] - a[1])
-      .slice(0,6); // top 6
+      .slice(0,7); // top 7
 
     sorted.forEach(([url,count], index) => {
       const row = document.createElement("div");
@@ -841,6 +887,33 @@ function connectSocket(){
         feed.scrollTop = feed.scrollHeight;
       }
     });
+    // ---- Button State Sync ----
+    if (data.phase === "done") {
+        scanState = "idle";
+        scanCompleted = true;
+        updateButtons(true);
+    }
+
+    else if (data.phase === "idle") {
+        scanState = "idle";
+        updateButtons(false);
+    }
+
+    else if (data.phase === "paused") {
+        scanState = "paused";
+        scanCompleted = false;
+        updateButtons(false);
+    }
+
+    else if (["crawling","scanning","ai"].includes(data.phase)) {
+        scanState = "running";
+        scanCompleted = false;
+        updateButtons(false);
+    }
+
+    if (document.getElementById("aiSection").style.display === "block") {
+    renderAIList();
+    }
   };
 }
 
@@ -849,12 +922,12 @@ connectSocket();
 function startScan(){
   const target = document.getElementById("target").value;
   const urlLimit = document.getElementById("urlLimit").value;
-  const aiLimit = document.getElementById("aiLimit").value;
+  const depthLimit = document.getElementById("depthLimit").value;
 
   fetch(
-    `/start?target=${encodeURIComponent(target)}&url_limit=${urlLimit}&ai_limit=${aiLimit}`,
-    {method:"POST"}
-  );
+      `/start?target=${encodeURIComponent(target)}&url_limit=${urlLimit}&depth_limit=${depthLimit}`,
+      {method:"POST"}
+    );
 
   // Reset timeline
   scanActive = false;
@@ -911,18 +984,74 @@ function renderAIList(){
                     <b>${v.url}</b>
                     (${v.param}) - ${v.severity}
                 </div>
-                <button onclick="generateSingleAI(${index})">
-                    Generate
-                </button>
+                <div>
+                    <button class="bg-pink-500 px-3 py-2 mt-2 mr-2 rounded-xl text-black font-bold hover:bg-pink-100"
+                        onclick="toggleCard(${index})">
+                        Toggle
+                    </button>
+                    <button class="bg-green-500 px-3 py-2 mt-2 rounded-xl text-black font-bold hover:bg-green-100"
+                        onclick="generateSingleAI(${index})">
+                        Generate Fix
+                    </button>
+                </div>
             </div>
-            <div id="aiResult-${index}"
-                 style="margin-top:8px;font-size:13px;color:#94a3b8;">
-                 ${v.ai_fix ? v.ai_fix : ""}
-            </div>
+            ${v.ai_fix ? (() => {
+
+            const s = parseAISections(v.ai_fix);
+
+            return `
+        <div id="cardBody-${index}" style="background:#020617;padding:12px;border-radius:8px;margin-top:8px;display:${collapsedCards.has(index) ? "none" : "block"}">
+
+        <div style="color:#38bdf8;font-size:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+        <span>Generated in ${v.ai_time || "?"} seconds</span>
+
+        </div>
+
+        <div>
+        <b style="color:#22c55e;">Explanation</b>
+        <p>${s.explanation}</p>
+        </div>
+
+        <div style="margin-top:8px;">
+        <b style="color:#22c55e;">Impact</b>
+        <p>${s.impact}</p>
+        </div>
+
+        <div style="margin-top:8px;">
+        <b style="color:#22c55e;">Secure Fix</b>
+        <p>${s.fix}</p>
+        </div>
+
+        <div style="margin-top:8px;">
+        <b style="color:#22c55e;">Secure Code Example</b>
+        <pre style="background:#020617;padding:6px;border-radius:4px;">
+        ${s.code}
+        </pre>
+        </div>
+
+        <div style="margin-top:8px;">
+        <b style="color:#22c55e;">Prevention Checklist</b>
+        <p>${s.checklist}</p>
+        </div>
+
+        <button onclick="copyFix(${index})"
+        class="bg-gray-500 px-2 py-1 mt-2 rounded-xl text-black font-bold hover:bg-gray-100">
+        Copy
+        </button>
+
+        </div>
         `;
 
+        })() : ""}
+        `;
         container.appendChild(row);
     });
+}
+
+function copyFix(index){
+    const text = document.getElementById(`fixText-${index}`).innerText;
+    navigator.clipboard.writeText(text);
+    alert("Fix copied to clipboard");
 }
 
 function showSpinner(){
@@ -946,10 +1075,11 @@ function generateSingleAI(index){
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify([index])
     }).then(res=>res.json())
-      .then(()=>{
-          hideSpinner();
-          renderAIList();
-      });
+      .then(data=>{
+        hideSpinner();
+        // Do nothing here.
+        // WebSocket will push updated vulns automatically.
+    });
 }
 
 function generateSelectedAI(){
@@ -968,10 +1098,11 @@ function generateSelectedAI(){
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(selected)
     }).then(res=>res.json())
-      .then(()=>{
-          hideSpinner();
-          renderAIList();
-      });
+      .then(data=>{
+        hideSpinner();
+        // Do nothing here.
+        // WebSocket will push updated vulns automatically.
+    });
 }
 
 function generateTop3(){
@@ -995,7 +1126,57 @@ function generateTop3(){
     });
 }
 
-</script>
+function toggleCard(index){
 
+    const body = document.getElementById(`cardBody-${index}`);
+
+    if(!body) return;
+
+    const collapsed = collapsedCards.has(index);
+
+    if(collapsed){
+        collapsedCards.delete(index);
+        body.style.display = "block";
+    }else{
+        collapsedCards.add(index);
+        body.style.display = "none";
+    }
+}
+
+function parseAISections(text){
+
+    const sections = {
+        explanation:"",
+        impact:"",
+        fix:"",
+        code:"",
+        checklist:""
+    };
+
+    const parts = text.split("###");
+
+    parts.forEach(p=>{
+        const lower = p.toLowerCase();
+
+        if(lower.includes("explanation"))
+            sections.explanation = p.replace(/explanation/i,"").trim();
+
+        if(lower.includes("impact"))
+            sections.impact = p.replace(/impact/i,"").trim();
+
+        if(lower.includes("secure fix"))
+            sections.fix = p.replace(/secure fix/i,"").trim();
+
+        if(lower.includes("secure code"))
+            sections.code = p.replace(/secure code example/i,"").trim();
+
+        if(lower.includes("prevention"))
+            sections.checklist = p.replace(/prevention checklist/i,"").trim();
+    });
+
+    return sections;
+}
+
+</script>
 </body>
 </html>
