@@ -1,73 +1,234 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse, FileResponse
 from ui.web.state import web_state
 from ui.web.runner import run_scan
+from core.report.html import HTMLReport
+from collections import Counter
 import threading
 from pathlib import Path
-from core.report.html import HTMLReport
-
+import asyncio
+from core.ai.prompt import build_prompt
+from core.ai.offline import OfflineAIAdvisor
+from core.ai.llm_loader import load_llm
+from core.ai.cache import AICache
+import time
+from core.analysis.clustering import cluster_vulnerabilities
 
 app = FastAPI()
-
 BASE_DIR = Path(__file__).resolve().parent
+
+active_connections: list[WebSocket] = []
 
 @app.get("/", response_class=HTMLResponse)
 def index():
     return (BASE_DIR / "templates" / "index.html").read_text(encoding="utf-8")
 
+# Thread Tracking
+scan_thread = None
+
+# WebSocket Endpoint
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    active_connections.append(websocket)
+
+    try:
+        while True:
+            await send_status_update(websocket)
+            await asyncio.sleep(0.5)
+    except WebSocketDisconnect:
+        active_connections.remove(websocket)
+
+
+async def send_status_update(websocket: WebSocket):
+    type_dist = {}
+    severity_dist = {}
+
+    for v in web_state.vulnerabilities:
+
+        # ---- TYPE DISTRIBUTION ----
+        t = getattr(v, "vuln_type", None)
+
+        if not t:
+            t = "Unknown"
+
+        if t not in type_dist:
+            type_dist[t] = 0
+
+        type_dist[t] += 1
+
+        # ---- SEVERITY DISTRIBUTION ----
+        s = getattr(v, "severity", "low")
+
+        if s not in severity_dist:
+            severity_dist[s] = 0
+
+        severity_dist[s] += 1
+
+    def calculate_threat_index(vulns):
+
+        weights = {
+            "critical": 10,
+            "high": 6,
+            "medium": 3,
+            "low": 1
+        }
+
+        seen = set()
+        score = 0
+
+        from urllib.parse import urlparse
+        for v in vulns:
+
+            endpoint = urlparse(v.url).path
+            param = (v.parameter or "").lower()
+            key = (endpoint, param, v.vuln_type)
+
+            if key in seen:
+                continue
+
+            seen.add(key)
+            severity = (v.severity or "low").lower()
+            score += weights.get(severity, 1)
+
+        return min(score, 100)
+
+    def calculate_attack_surface(vulns, urls):
+
+        from urllib.parse import urlparse
+        seen = set()
+
+        for v in vulns:
+            endpoint = urlparse(v.url).path
+            param = (v.parameter or "").lower()
+            key = (endpoint, param, v.vuln_type)
+            seen.add(key)
+
+        unique_vulns = len(seen)
+        pages = max(len(urls), 1)
+        score = round(unique_vulns / pages, 2)
+
+        return score
+
+    await websocket.send_json({
+        "phase": web_state.phase,
+        "urls": web_state.discovered_urls,
+        "vulns": [
+            {
+                "vuln_type": v.vuln_type,
+                "type": v.vuln_type,
+                "url": v.url,
+                "param": v.parameter,
+                "ai_fix": getattr(v, "ai_fix", None),
+                "ai_prompt": getattr(v, "ai_prompt", None),
+                "severity": getattr(v, "severity", None),
+                "context": getattr(v, "context", None),
+                "ai_time": getattr(v, "ai_time", None),
+            }
+            for v in web_state.vulnerabilities
+        ],
+        "analytics": {
+            "type_distribution": type_dist,
+            "severity_distribution": severity_dist,
+            "threat_index": calculate_threat_index(web_state.vulnerabilities),
+            "attack_surface": calculate_attack_surface(
+                web_state.vulnerabilities,
+                web_state.discovered_urls
+            )
+        },
+        "elapsed": getattr(web_state, "elapsed", 0),
+    })
+
+
+# Scan Control
 def reset_state(state):
     state.phase = "idle"
     state.stop = False
+    state.paused = False
+    state.stopped = False
     state.ai_done = False
-    state.elapsed = None
+    state.elapsed = 0
     state.discovered_urls.clear()
     state.vulnerabilities.clear()
 
 
 @app.post("/start")
-def start(target: str, url_limit: int = 25, ai_limit: int = 2):
+def start(target: str, url_limit: int = 25, depth_limit: int = 2):
+    global scan_thread
+
+    if scan_thread and scan_thread.is_alive():
+        return {"status": "scan already running"}
+
     reset_state(web_state)
-    web_state.phase = "starting"
-    web_state.stop = False
-    web_state.discovered_urls.clear()
-    web_state.vulnerabilities.clear()
-    web_state.ai_done = False
-    t = threading.Thread(
+
+    scan_thread = threading.Thread(
         target=run_scan,
-        args=(web_state, target, url_limit, ai_limit),
-        daemon=True,
+        args=(web_state, target, url_limit, depth_limit),
+        daemon=True
     )
-    t.start()
+    scan_thread.start()
 
     return {"status": "started"}
 
-@app.get("/status")
-def status():
-    return JSONResponse({
-        "phase": web_state.phase,
-        "urls": web_state.discovered_urls,
-        "vulns": [
-            {
-                "type": v.vuln_type,
-                "url": v.url,
-                "param": v.parameter,
-                "ai": getattr(v, "ai_fix", None),
-                "severity": getattr(v, "severity", "medium"),
-            }
-            for v in web_state.vulnerabilities
-        ],
-        "summary": {
-            "urls_crawled": len(web_state.discovered_urls),
-            "vulns_found": len(web_state.vulnerabilities),
-            "ai_done": web_state.ai_done,
-            "time_taken": getattr(web_state, "elapsed", None),
-        }
-    })
 
 @app.post("/stop")
-def stop():
+def stop_scan():
+    web_state.paused = True
+    web_state.phase = "paused"
+    return {"status": "paused"}
+
+
+@app.post("/resume")
+def resume_scan():
+    web_state.paused = False
+    web_state.phase = "scanning"
+    return {"status": "resumed"}
+
+
+@app.post("/reset")
+def reset_scan():
+    global scan_thread
+
     web_state.stop = True
-    return {"status": "stopping"}
+    web_state.paused = False
+
+    # Wait for scan thread to terminate
+    if scan_thread and scan_thread.is_alive():
+        scan_thread.join(timeout=2)
+    reset_state(web_state)
+    return {"status": "reset"}
+
+
+@app.post("/generate_ai")
+def generate_ai(selected_ids: list[int]):
+
+    total_tokens = 0
+
+    llm = load_llm("models/mistral-7b-instruct-v0.1.Q4_K_M.gguf")
+    ai = OfflineAIAdvisor(llm)
+    cache = AICache()
+
+    for idx in selected_ids:
+        if idx >= len(web_state.vulnerabilities):
+            continue
+
+        v = web_state.vulnerabilities[idx]
+        prompt = build_prompt(v)
+        cached = cache.get(v)
+
+        if cached:
+            response_text = cached
+            duration = "⚡ Cached result"
+        else:
+            start = time.time()
+            response_text = ai.generate_fix(prompt)
+            duration = round(time.time() - start, 2)
+            cache.set(v, response_text)
+        v.ai_fix = response_text
+        v.ai_time = duration
+
+    return {"status":"done","tokens":total_tokens}
+
 
 @app.get("/report/html")
 def download_html_report():
@@ -78,5 +239,3 @@ def download_html_report():
         filename="vulscanware_report.html",
         media_type="text/html"
     )
-
-

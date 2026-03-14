@@ -33,20 +33,16 @@ class DomXSSDetector:
     def __init__(self, timeout_ms=8000):
         self.timeout_ms = timeout_ms
 
-    def detect(self, injection: dict):
-        url = injection["url"]
-        payload = injection["payload"]
-
+    def scan_page(self, url):
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             page = browser.new_page()
 
-            # install hooks before any script runs
             page.add_init_script(JS_HOOKS)
 
             try:
                 page.goto(url, timeout=self.timeout_ms)
-                page.wait_for_timeout(500)  # allow JS execution
+                page.wait_for_timeout(500)
                 hits = page.evaluate("window.__xss_hits || []")
             except Exception:
                 browser.close()
@@ -58,10 +54,12 @@ class DomXSSDetector:
             return Vulnerability(
                 vuln_type="DOM XSS",
                 url=url,
-                parameter=injection.get("parameter", ""),
-                method=injection.get("method", "GET"),
-                payload=payload,
+                parameter="",
+                method="GET",
+                payload="DOM-SCAN",
                 evidence=f"JS sink triggered: {', '.join(set(hits))}",
-                severity="high"
+                severity="critical",
+                context="javascript"
             )
+
         return None
