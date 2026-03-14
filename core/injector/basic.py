@@ -2,7 +2,6 @@ from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
 import requests
 from bs4 import BeautifulSoup
 from core.payloads.registry import get_payloads
-from core.payloads.mutator import mutate
 from core.debug.payload_logger import log_injection
 
 
@@ -47,27 +46,25 @@ class BasicInjector:
 
             # URL parameters are usually html/url contexts
             for payload_obj in get_payloads("html") + get_payloads("url"):
+                payload = payload_obj["payload"]
 
-                base_payload = payload_obj["payload"]
+                new_params = params.copy()
+                new_params[param] = payload
 
-                for payload in mutate(base_payload):
-                    new_params = params.copy()
-                    new_params[param] = payload
+                new_query = urlencode(new_params, doseq=True)
 
-                    new_query = urlencode(new_params, doseq=True)
+                new_url = urlunparse(
+                    parsed._replace(query=new_query)
+                )
 
-                    new_url = urlunparse(
-                        parsed._replace(query=new_query)
-                    )
+                log_injection("GET", new_url, param, payload)
 
-                    log_injection("GET", new_url, param, payload)
-
-                    injections.append({
-                        "url": new_url,
-                        "method": "GET",
-                        "parameter": param,
-                        "payload": payload
-                    })
+                injections.append({
+                    "url": new_url,
+                    "method": "GET",
+                    "parameter": param,
+                    "payload": payload
+                })
 
         # ----------------------------
         # FORM INJECTION
@@ -129,23 +126,20 @@ class BasicInjector:
                     continue
 
                 for payload_obj in get_payloads(context):
+                    payload = payload_obj["payload"]
+                    data = form_defaults.copy()
 
-                    base_payload = payload_obj["payload"]
+                    # inject payload into target field
+                    data[field] = payload
 
-                    for payload in mutate(base_payload):
-                        data = form_defaults.copy()
+                    log_injection(method, action, field, payload, data)
 
-                        # inject payload into target field
-                        data[field] = payload
-
-                        log_injection(method, action, field, payload, data)
-
-                        injections.append({
-                            "url": action,
-                            "method": method,
-                            "parameter": field,
-                            "payload": payload,
-                            "data": data
-                        })
+                    injections.append({
+                        "url": action,
+                        "method": method,
+                        "parameter": field,
+                        "payload": payload,
+                        "data": data
+                    })
 
         return injections

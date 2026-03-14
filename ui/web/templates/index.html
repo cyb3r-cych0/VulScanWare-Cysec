@@ -81,6 +81,10 @@
       background:#0f766e;
       box-shadow:0 0 5px #2dd4bf;
     }
+    .phase-dom-analysis{
+      background: #6366f1;
+    box-shadow:0 0 5px #8b5cf6;
+    }
 
     .phase-done {
       background:#14532d;
@@ -115,19 +119,19 @@
 
 <header id="phaseHeader">
   VulScanWare – Security Intelligence Console
-  <span id="phaseIndicator" style="margin-left:20px;font-size:20px;"></span>
 </header>
 
 <body class="bg-gray-950 text-gray-200 font-mono selection:bg-cyan-500 mt-0">
 
 <div class="p-8 max-w-8xl mx-auto">
 
-<!--  INPUT -->
+<!-- INPUT -->
 <div class="card d-flex flex-column align-items-center justify-content-center text-center mt-0">
         Target:
         <input class="bg-gray-800 p-3 rounded-xl" id="target" style="width:55%"
                type="text"
                placeholder="Enter website URL (https://example.com)"
+               default="http://192.168.1.11/mutillidae/index.php?page=home.php"
                class="flex-1 p-3 bg-gray-900 rounded border border-gray-700 text-white">
         Crawl Limit:
         <input class="bg-gray-800 p-3 rounded-xl" id="urlLimit" type="number" value="25" min="1" style="width:80px">
@@ -145,51 +149,61 @@
         </button>
 </div>
 
-<div style="margin-left:20px;margin-bottom: 10px">Progress</div>
-    <div class="shadow-lg shadow-blue-500/20" style="background:#1e293b;height:12px;border-radius:6px;margin-left: 20px;margin-right:20px;">
+<div class="d-flex flex-column align-items-center justify-content-center text-center mb-2">
+    <span id="phaseIndicator" style="font-size:20px;"></span></div>
+    <div class="shadow-lg shadow-blue-500/20"
+         style="background:#1e293b;height:12px;border-radius:6px;margin-left: 20px;margin-right:20px;">
     <div id="progressBar" style="height:12px;width:0%;background:#38bdf8;border-radius:6px;transition:width 0.4s;"></div>
 </div>
 
-<!-- KPI CARDS -->
+<!-- METRICS CARDS -->
 <div class="card d-flex flex-column align-items-center justify-content-center text-center">
-    <div class="grid grid-cols-4 gap-6 mb-2 mt-2">
-        <div class="bg-gray-800 p-3 rounded-xl">
+    <div class="grid grid-cols-10 gap-6 mb-2 mt-2">
+        <div class="bg-gray-800 p-2 rounded-xl">
             <h2>Status</h2>
-            <p id="status" class="text-2xl text-cyan-400">Idle</p>
+            <p id="status" class="text-l text-cyan-400">Idle</p>
         </div>
-        <div class="bg-gray-800 p-3 rounded-xl">
+        <div class="bg-gray-800 p-2 rounded-xl">
             <h2>Links</h2>
-            <p id="totalLinks" class="text-2xl text-pink-400">0</p>
+            <p id="totalLinks" class="text-l text-pink-400">0</p>
         </div>
-        <div class="bg-gray-800 p-3 rounded-xl">
-            <h2>Threat Index</h2>
-            <p id="threatIndex" class="text-2xl text-red-400">0</p>
-        </div>
-        <div class="bg-gray-800 p-3 rounded-xl">
-            <h2>Time Taken</h2>
-            <p id="timeTaken" class="text-2xl text-cyan-400">0</p>
-        </div>
-        <div class="bg-gray-800 p-3 rounded-xl">
+        <div class="bg-gray-800 p-2 rounded-xl">
             <h2>Critical</h2>
-            <p id="critCount" class="text-2xl text-red-500">0</p>
+            <p id="critCount" class="text-l text-red-500">0</p>
         </div>
-        <div class="bg-gray-800 p-3 rounded-xl">
+        <div class="bg-gray-800 p-2 rounded-xl">
             <h2>High</h2>
-            <p id="highCount" class="text-2xl text-orange-400">0</p>
+            <p id="highCount" class="text-l text-orange-400">0</p>
         </div>
-        <div class="bg-gray-800 p-3 rounded-xl">
+        <div class="bg-gray-800 p-2 rounded-xl">
             <h2>Medium</h2>
-            <p id="medCount" class="text-2xl text-yellow-400">0</p>
+            <p id="medCount" class="text-l text-yellow-400">0</p>
         </div>
-        <div class="bg-gray-800 p-3 rounded-xl">
+        <div class="bg-gray-800 p-2 rounded-xl">
             <h2>Low</h2>
-            <p id="lowCount" class="text-2xl text-green-400">0</p>
+            <p id="lowCount" class="text-l text-green-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-2 rounded-xl">
+            <h2>Exposure</h2>
+            <p id="attackSurface" class="text-l text-purple-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-2 rounded-xl">
+            <h2>Menace</h2>
+            <p id="threatIndex" class="text-l text-red-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-2 rounded-xl">
+            <h2>Risk</h2>
+            <p id="riskLevelKPI" class="text-l text-red-400">0</p>
+        </div>
+        <div class="bg-gray-800 p-2 rounded-xl">
+            <h2>Duration</h2>
+            <p id="timeTaken" class="text-l text-cyan-400">0</p>
         </div>
     </div>
 </div>
 
+<!-- LIVE VULNERABILITY CHARTS -->
 <div class="card d-flex flex-column align-items-center justify-content-center text-center">
-
 <div class="grid grid-cols-3">
 <div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
     <h3>Attack Density (Vulns / Second)</h3>
@@ -206,12 +220,22 @@
 </div>
 </div>
 
+<!-- DISCOVERED VULNERABLE URLs -->
 <div class="card d-flex flex-column align-items-center justify-content-center">
-
 <div class="grid">
 <div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
-        <h3>XSS Type Distribution</h3>
-        <canvas id="typeChart"></canvas>
+        <h3 class="mb-2">Live Vulnerabilities</h3>
+          <div id="vulnFeed"
+             style="
+               max-height:360px;
+               overflow-y:auto;
+               font-family:monospace;
+               font-size:13px;
+               background:#020617;
+               padding:10px;
+               border-radius:6px;
+             ">
+          </div>
     </div>
 <div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
       <h3>Top Vulnerable Endpoints</h3>
@@ -229,21 +253,12 @@
 </div>
 </div>
 
+<!-- GRAPHICAl XSS DISTRIBUTION -->
 <div class="card d-flex flex-column align-items-center justify-content-center">
 <div class="grid">
 <div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
-        <h3 class="mb-2">Live Vulnerabilities</h3>
-          <div id="vulnFeed"
-             style="
-               max-height:360px;
-               overflow-y:auto;
-               font-family:monospace;
-               font-size:13px;
-               background:#020617;
-               padding:10px;
-               border-radius:6px;
-             ">
-          </div>
+        <h3>XSS Type Distribution</h3>
+        <canvas id="typeChart"></canvas>
     </div>
 <div class="card bg-gray-800 p-3 rounded-xl shadow-md shadow-blue-500/20">
         <h3>Vulnerability Heatmap</h3>
@@ -266,6 +281,7 @@
 </div>
 </div>
 
+<!-- AI REMEDIATION -->
 <div class="card" id="aiSection">
     <h3>AI Remediation Panel</h3>
     <div id="aiVulnList"
@@ -285,16 +301,17 @@
             class="bg-pink-500 px-6 py-3 rounded-xl text-black font-bold hover:bg-pink-100">
         Open Panel
     </button>
-    <button onclick="generateSelectedAI()"
+    <button onclick="generateSelectedAI(this)"
         class="bg-green-500 px-6 py-3 mt-2 rounded-xl text-black font-bold hover:bg-green-100">
         Generate Fix
     </button>
-    <button onclick="generateTop3()"
+    <button onclick="generateTop3(this)"
         class="bg-cyan-500 px-6 py-3 mt-2 rounded-xl text-black font-bold hover:bg-cyan-100">
         Generate Top 3
     </button>
 </div>
 
+<!-- THREAT & RISK LEVEL GAUGES -->
 <div class="grid">
     <div class="card">
       <h3>Overall Risk Score</h3>
@@ -329,14 +346,51 @@ let densityData = [];
 let densityLabels = [];
 let lastVulnCount = 0;
 let scanCompleted = false;
+const selectedVulns = new Set();
+const generatingVulns = new Set();
 let collapsedCards = new Set();
-
-const canvas = document.getElementById("threatGauge");
-canvas.width = 100;  // Internal width in pixels
-canvas.height = 100; // Internal height in pixels
-
 let scanState = "idle"; // idle | running | paused
 
+
+/// Start Vulnerability Scanning
+function startScan(){
+  const target = document.getElementById("target").value;
+  const urlLimit = document.getElementById("urlLimit").value;
+  const depthLimit = document.getElementById("depthLimit").value;
+
+  fetch(
+      `/start?target=${encodeURIComponent(target)}&url_limit=${urlLimit}&depth_limit=${depthLimit}`,
+      {method:"POST"}
+    );
+  // Reset timeline
+  scanActive = false;
+  scanStartTime = null;
+  attackTimeline = [];
+  attackLabels = [];
+
+  if (timelineChart){
+    timelineChart.data.labels = [];
+    timelineChart.data.datasets[0].data = [];
+    timelineChart.update();
+  }
+
+  densityData = [];
+  densityLabels = [];
+  lastVulnCount = 0;
+
+  if (densityChart){
+      densityChart.data.labels = [];
+      densityChart.data.datasets[0].data = [];
+      densityChart.update();
+  }
+  // Reset rendered feed cache
+  window.renderedVulns = new Set();
+  // Reconnect WebSocket
+  if (socket) socket.close();
+  connectSocket();
+}
+
+/// Reset UI
 function fullResetUI(){
     attackTimeline = [];
     attackLabels = [];
@@ -359,6 +413,7 @@ function fullResetUI(){
     window.renderedVulns = new Set();
 }
 
+/// Start Scan
 function handleScan(){
     if (scanState === "idle"){
         startScan();
@@ -372,18 +427,16 @@ function handleScan(){
     }
 }
 
+/// Stop Scan
 function handleStop(){
-
     // If running → pause
     if (scanState === "running"){
         fetch("/stop",{method:"POST"});
         scanState = "paused";
         updateButtons(false);
     }
-
     // If paused OR completed → reset
     else if (scanState === "paused" || scanCompleted){
-
         fetch("/reset",{method:"POST"})
         .then(()=>{
             fullResetUI();
@@ -394,6 +447,7 @@ function handleStop(){
     }
 }
 
+/// Update UI Buttons Dynamically
 function updateButtons(completed = false){
     const scanBtn = document.getElementById("scanBtn");
     const stopBtn = document.getElementById("stopBtn");
@@ -411,11 +465,14 @@ function updateButtons(completed = false){
     else { // idle
         scanBtn.textContent = "Scan";
         scanBtn.disabled = false;
-
-        // If scan just completed → allow reset
-        stopBtn.textContent = completed ? "Reset" : "Stop";
+        stopBtn.textContent = completed ? "Reset" : "Stop"; // If scan just completed → allow reset
     }
 }
+
+/// Threat Gauge
+const canvas = document.getElementById("threatGauge");
+canvas.width = 50;  // Internal width in pixels
+canvas.height = 50; // Internal height in pixels
 
 function initThreatGauge(){
   threatGauge = new Chart(document.getElementById("threatGauge"),{
@@ -442,9 +499,9 @@ function initThreatGauge(){
     }
   });
 }
-
 initThreatGauge();
 
+// Vulnerabilities Over Time - Timeline Chart
 function initTimelineChart(){
   timelineChart = new Chart(document.getElementById("timelineChart"),{
     type:"line",
@@ -469,9 +526,9 @@ function initTimelineChart(){
     }
   });
 }
-
 initTimelineChart();
 
+// Vulnerabilities/Second - Density Chart
 function initDensityChart(){
   densityChart = new Chart(document.getElementById("densityChart"),{
     type:"line",
@@ -496,9 +553,9 @@ function initDensityChart(){
     }
   });
 }
-
 initDensityChart();
 
+// Risk Dial
 function initRiskDial(){
   riskDial = new Chart(document.getElementById("riskDial"),{
     type:"doughnut",
@@ -524,9 +581,9 @@ function initRiskDial(){
     }
   });
 }
-
 initRiskDial();
 
+// Initialize Charts - Type Chart, Severity Chart
 function initCharts(){
   typeChart = new Chart(document.getElementById("typeChart"),{
     type:"bar",
@@ -557,25 +614,28 @@ function initCharts(){
     }
   });
 }
-
 initCharts();
 
+// Configure Web Socket
 function connectSocket(){
   socket = new WebSocket("ws://" + location.host + "/ws");
 
   socket.onmessage = function(event){
     const data = JSON.parse(event.data);
-
     const analytics = data.analytics || {};
     const typeDist = analytics.type_distribution || {};
     const sevDist = analytics.severity_distribution || {};
-
     const progressBar = document.getElementById("progressBar");
     const threatIndex = analytics.threat_index || 0;
     const aiBtn = document.getElementById("aiBtn");
 
     aiBtn.disabled = data.phase !== "done";
     window.currentVulns = data.vulns;
+
+    // Clear rendered vulnerabilities only ONCE when scan finishes
+    // if (data.phase === "done" && !window.scanCompleted) {
+    //     window.renderedVulns.clear();
+    // }
 
     document.getElementById("threatScore").textContent = threatIndex;
 
@@ -597,131 +657,7 @@ function connectSocket(){
 
     threatGauge.update();
 
-    if (data.phase === "crawling") {
-      progressBar.style.background = "#38bdf8";
-      progressBar.style.width =
-        Math.min(data.urls.length * 5, 100) + "%";
-    }
-    else if (data.phase === "scanning") {
-      progressBar.style.background = "#facc15";
-      progressBar.style.width =
-        Math.min(data.vulns.length * 10, 100) + "%";
-    }
-    else if (data.phase === "stored-analysis") {
-      progressBar.style.background = "#2dd4bf";
-      progressBar.style.width =
-        Math.min(data.vulns.length * 10, 100) + "%";
-    }
-    else if (data.phase === "ai") {
-      progressBar.style.background = "#a855f7";
-      progressBar.style.width =
-        Math.min(data.vulns.filter(v=>v.ai).length * 20, 100) + "%";
-    }
-    else {
-      progressBar.style.width = "0%";
-    }
-
-    // Attack Timeline
-    if (data.phase === "crawling" && !scanActive) {
-      scanStartTime = Date.now();
-      scanActive = true;
-    }
-
-    if (scanActive && ["crawling","scanning","ai"].includes(data.phase)) {
-      const secondsElapsed =
-        Math.floor((Date.now() - scanStartTime) / 1000);
-
-      // Prevent duplicate second entries
-      if (attackLabels.length === 0 ||
-          attackLabels[attackLabels.length - 1] !== secondsElapsed) {
-
-        attackLabels.push(secondsElapsed);
-        attackTimeline.push(data.vulns.length);
-
-        timelineChart.data.labels = attackLabels;
-        timelineChart.data.datasets[0].data = attackTimeline;
-        timelineChart.update();
-      }
-    }
-
-    // Freeze when done
-    if (["done","idle","stopped"].includes(data.phase)) {
-      scanActive = false;
-    }
-
-    // ---- Attack Density ----
-    if (scanActive && ["crawling","scanning","ai"].includes(data.phase)) {
-
-      const currentCount = data.vulns.length;
-      const delta = currentCount - lastVulnCount;
-
-      lastVulnCount = currentCount;
-
-      const secondsElapsed =
-        Math.floor((Date.now() - scanStartTime) / 1000);
-
-      if (densityLabels.length === 0 ||
-          densityLabels[densityLabels.length - 1] !== secondsElapsed) {
-
-        densityLabels.push(secondsElapsed);
-        densityData.push(Math.max(delta,0));
-
-        densityChart.data.labels = densityLabels;
-        densityChart.data.datasets[0].data = densityData;
-        densityChart.update();
-      }
-    }
-
-    // Real-Time Phase Transition Feedback
-    const statusEl = document.getElementById("status");
-
-    statusEl.className = "";
-
-    if (data.phase === "crawling") statusEl.classList.add("orange");
-    if (data.phase === "scanning") statusEl.classList.add("yellow");
-    if (data.phase === "ai") statusEl.classList.add("green");
-    if (data.phase === "idle") statusEl.classList.add("green");
-
-    document.getElementById("threatIndex").textContent =
-      analytics.threat_index || 0;
-
-    document.getElementById("critCount").textContent =
-      sevDist.critical || 0;
-
-    document.getElementById("highCount").textContent =
-      sevDist.high || 0;
-
-    document.getElementById("medCount").textContent =
-      sevDist.medium || 0;
-
-    document.getElementById("lowCount").textContent =
-      sevDist.low || 0;
-
-    // Update total links dynamically
-    document.getElementById("totalLinks").textContent = data.urls.length;
-
-    // Update phase/status
-    document.getElementById("status").textContent = data.phase.toUpperCase();
-
-    // Update time taken
-    document.getElementById("timeTaken").textContent =
-      data.elapsed ? data.elapsed + "s" : "0";
-
-    // Update type chart
-    typeChart.data.labels = Object.keys(typeDist);
-    typeChart.data.datasets[0].data = Object.values(typeDist);
-    typeChart.update();
-
-    // Update severity chart
-    severityChart.data.datasets[0].data = [
-      sevDist.critical || 0,
-      sevDist.high || 0,
-      sevDist.medium || 0,
-      sevDist.low || 0
-    ];
-    severityChart.update();
-
-    // Header
+    // Header Phase Transition
     const header = document.getElementById("phaseHeader");
     const indicator = document.getElementById("phaseIndicator");
 
@@ -739,72 +675,203 @@ function connectSocket(){
       header.classList.add("phase-stored-analysis");
       indicator.textContent = "● Stored XSS Analysis";
     }
-    else if (data.phase === "ai") {
-      header.classList.add("phase-ai");
-      indicator.textContent = "● AI Analysis";
+    else if (data.phase === "dom-analysis") {
+      header.classList.add("phase-dom-analysis");
+      indicator.textContent = "● DOM XSS Analysis";
     }
+    // else if (data.phase === "ai") {
+    //   header.classList.add("phase-ai");
+    //   indicator.textContent = "● AI Analysis";
+    // }
     else if (data.phase === "done") {
       header.classList.add("phase-done");
       indicator.textContent = "● Complete";
     }
     else {
-      indicator.textContent = "";
+      indicator.textContent = "● Progress";
     }
 
-    // ---------- ENDPOINT RANKING ----------
+    // ----------------- Progress Bar Phase Transition ------------------
+    if (data.phase === "crawling") {
+      progressBar.style.background = "#38bdf8";
+      progressBar.style.width = Math.min(data.urls.length * 5, 100) + "%";
+    }
+    else if (data.phase === "scanning") {
+      progressBar.style.background = "#facc15";
+      progressBar.style.width = Math.min(data.vulns.length * 10, 100) + "%";
+    }
+    else if (data.phase === "stored-analysis") {
+      progressBar.style.background = "#2dd4bf";
+      progressBar.style.width = Math.min(data.vulns.length * 15, 100) + "%";
+    }
+    else if (data.phase === "dom-analysis") {
+      progressBar.style.background = "#a855f7";
+      progressBar.style.width = Math.min(data.vulns.length * 20, 100) + "%";
+    }
+    else if (data.phase === "ai") {
+      progressBar.style.background = "#ff1493";
+      progressBar.style.width = Math.min(data.vulns.filter(v=>v.ai_fix).length * 20, 100) + "%";
+    }
+    else {
+      progressBar.style.width = "0%";
+    }
+
+    // Attack Timeline
+    if (data.phase === "crawling" && !scanActive) {
+      scanStartTime = Date.now();
+      scanActive = true;
+    }
+    if (scanActive && ["crawling","scanning","stored-analysis","dom-analysis"].includes(data.phase)) {
+      const secondsElapsed =
+        Math.floor((Date.now() - scanStartTime) / 1000);
+
+      // Prevent duplicate second entries
+      if (attackLabels.length === 0 || attackLabels[attackLabels.length - 1] !== secondsElapsed) {
+        attackLabels.push(secondsElapsed);
+        attackTimeline.push(data.vulns.length);
+
+        timelineChart.data.labels = attackLabels;
+        timelineChart.data.datasets[0].data = attackTimeline;
+        timelineChart.update();
+      }
+    }
+    // Freeze when done
+    if (["done","idle","stopped"].includes(data.phase)) {
+      scanActive = false;
+    }
+
+    // ---- Attack Density ----
+    if (scanActive && ["crawling","scanning","stored-analysis","dom-analysis"].includes(data.phase)) {
+
+      const currentCount = data.vulns.length;
+      const delta = currentCount - lastVulnCount;
+
+      lastVulnCount = currentCount;
+
+      const secondsElapsed = Math.floor((Date.now() - scanStartTime) / 1000);
+
+      if (densityLabels.length === 0 || densityLabels[densityLabels.length - 1] !== secondsElapsed) {
+        densityLabels.push(secondsElapsed);
+        densityData.push(Math.max(delta,0));
+        densityChart.data.labels = densityLabels;
+        densityChart.data.datasets[0].data = densityData;
+        densityChart.update();
+      }
+    }
+
+    // Real-Time Phase Transition Feedback
+    const statusEl = document.getElementById("status");
+
+    statusEl.className = "";
+
+    if (data.phase === "crawling") statusEl.classList.add("orange");
+    if (data.phase === "scanning") statusEl.classList.add("yellow");
+    if (data.phase === "stored-analysis") statusEl.classList.add("cyan");
+    if (data.phase === "dom-analysis") statusEl.classList.add("purple");
+    if (data.phase === "ai") statusEl.classList.add("pink");
+    if (data.phase === "idle") statusEl.classList.add("green");
+
+    /// -------------------- DASHBOARD METRICS ----------------------
+
+    document.getElementById("threatIndex").textContent = analytics.threat_index || 0;
+    document.getElementById("critCount").textContent = sevDist.critical || 0;
+    document.getElementById("highCount").textContent = sevDist.high || 0;
+    document.getElementById("medCount").textContent = sevDist.medium || 0;
+    document.getElementById("lowCount").textContent = sevDist.low || 0;
+    document.getElementById("totalLinks").textContent = data.urls.length;
+    document.getElementById("status").textContent = data.phase.toUpperCase();
+    document.getElementById("timeTaken").textContent = data.elapsed ? data.elapsed + "s" : "0";
+    document.getElementById("attackSurface").textContent = analytics.attack_surface;
+
+    // Update XSS type chart
+    typeChart.data.labels = Object.keys(typeDist);
+    typeChart.data.datasets[0].data = Object.values(typeDist);
+    typeChart.update();
+
+    // Update severity chart
+    severityChart.data.datasets[0].data = [
+      sevDist.critical || 0,
+      sevDist.high || 0,
+      sevDist.medium || 0,
+      sevDist.low || 0
+    ];
+    severityChart.update();
+
+    /// ---------- ENDPOINT RANKING ----------
     const rankingDiv = document.getElementById("endpointRanking");
     rankingDiv.innerHTML = "";
-
     const endpointCounts = {};
 
     data.vulns.forEach(v => {
-      if (!endpointCounts[v.url]) {
-        endpointCounts[v.url] = 0;
-      }
-      endpointCounts[v.url]++;
+        // normalize and group endpoint + parameter
+        const urlObj = new URL(v.url);
+        const endpoint = urlObj.origin + urlObj.pathname;
+        const param = (v.parameter || "").toLowerCase();
+        const key = endpoint + "|" + param + "|" + v.vuln_type;
+
+        if (!endpointCounts[key]) {
+            endpointCounts[key] = { url:endpoint, count:0 };
+        }
+        endpointCounts[key].count += 1;
+    });
+    const sorted = Object.values(endpointCounts)
+        .sort((a,b)=>b.count-a.count)
+        .slice(0,5);
+    sorted.forEach((item,index)=>{
+        const row=document.createElement("div");
+        row.style.padding = "6px";
+        row.style.marginBottom = "4px";
+        row.style.background = "#1e293b";
+        row.style.borderRadius = "4px";
+
+       row.innerHTML=`
+       <b>#${index+1}</b> (${item.count} issues)
+       <div>${item.url}</div>
+       `;
+       rankingDiv.appendChild(row);
     });
 
-    // Convert to sorted array
-    const sorted = Object.entries(endpointCounts)
-      .sort((a,b) => b[1] - a[1])
-      .slice(0,7); // top 7
-
-    sorted.forEach(([url,count], index) => {
-      const row = document.createElement("div");
-      row.style.padding = "6px";
-      row.style.marginBottom = "4px";
-      row.style.background = "#1e293b";
-      row.style.borderRadius = "4px";
-
-      row.innerHTML = `
-        <b>#${index+1}</b> (${count} issues)
-        <div style="font-size:11px;color:#94a3b8;">${url}</div>
-      `;
-
-      rankingDiv.appendChild(row);
-    });
-
-    /// ---------- HEATMAP ----------
+    /// ------------- HEATMAP ----------------
     const heatmap = document.getElementById("heatmap");
     heatmap.innerHTML = "";
-
     // Group vulnerabilities by URL
     const urlCounts = {};
-    data.vulns.forEach(v=>{
-      if(!urlCounts[v.url]){
-        urlCounts[v.url] = {count:0,severity:0};
-      }
-      urlCounts[v.url].count += 1;
 
-      // Weight severity
-      if(v.severity === "critical") urlCounts[v.url].severity += 4;
-      else if(v.severity === "high") urlCounts[v.url].severity += 3;
-      else if(v.severity === "medium") urlCounts[v.url].severity += 2;
-      else urlCounts[v.url].severity += 1;
+    data.vulns.forEach(v=>{
+      const urlObj = new URL(v.url);
+      const endpoint = urlObj.origin + urlObj.pathname;
+
+      if(!urlCounts[endpoint]){
+          urlCounts[endpoint] = {count:0,severity:0};
+      }
+      urlCounts[endpoint].count += 1;
+
+      if(v.severity === "critical") urlCounts[endpoint].severity += 4;
+      else if(v.severity === "high") urlCounts[endpoint].severity += 3;
+      else if(v.severity === "medium") urlCounts[endpoint].severity += 2;
+      else urlCounts[endpoint].severity += 1;
+    });
+    // Render blocks
+    Object.entries(urlCounts).forEach(([endpoint,dataObj])=>{
+      const intensity = Math.min(dataObj.severity * 15,100);
+      const block = document.createElement("div");
+
+      block.style.padding = "10px";
+      block.style.borderRadius = "6px";
+      block.style.background = `rgba(239,68,68,${intensity/100})`;
+      block.style.fontSize = "12px";
+      block.style.wordBreak = "break-all";
+
+      block.innerHTML = `
+        <div style="font-weight:bold;">${dataObj.count} issues</div>
+        <div>${endpoint}</div>
+      `;
+      heatmap.appendChild(block);
     });
 
-    const riskScore = Math.min(analytics.threat_index || 0, 100);
 
+    /// --------------------- RISK SCORE -----------------------
+    const riskScore = Math.min(analytics.threat_index || 0, 100);
     // Update dial values
     riskDial.data.datasets[0].data = [riskScore, 100 - riskScore];
 
@@ -825,87 +892,113 @@ function connectSocket(){
       color = "#facc15";
     }
 
+    // Risk Level KPI
+    let riskLevel = "LOW";
+    let riskColor = "#22c55e";
+
+    if (threatIndex > 75) {
+        riskLevel = "CRITICAL";
+        riskColor = "#dc2626";
+    }
+    else if (threatIndex > 50) {
+        riskLevel = "HIGH";
+        riskColor = "#ef4444";
+    }
+    else if (threatIndex > 25) {
+        riskLevel = "MEDIUM";
+        riskColor = "#facc15";
+    }
+
+    const riskEl = document.getElementById("riskLevelKPI");
+    riskEl.textContent = riskLevel.toUpperCase();
+    riskEl.style.color = riskColor;
+
     riskDial.data.datasets[0].backgroundColor[0] = color;
     riskDial.update();
 
     document.getElementById("riskLevel").textContent = level;
     document.getElementById("riskLevel").style.color = color;
 
-    // Render blocks
-    Object.entries(urlCounts).forEach(([url,dataObj])=>{
 
-      const intensity = Math.min(dataObj.severity * 15,100);
-
-      const block = document.createElement("div");
-      block.style.padding = "10px";
-      block.style.borderRadius = "6px";
-      block.style.background =
-        `rgba(239,68,68,${intensity/100})`;
-      block.style.fontSize = "12px";
-      block.style.wordBreak = "break-all";
-
-      block.innerHTML = `
-        <div style="font-weight:bold;">${dataObj.count} issues</div>
-        <div>${url}</div>
-      `;
-
-      heatmap.appendChild(block);
-    });
-
-    // Update vuln list
+    // ---------------- LIVE VULNERABILITIES ----------------
     const feed = document.getElementById("vulnFeed");
 
-    // Keep track of already displayed vulnerabilities
     if (!window.renderedVulns) {
-      window.renderedVulns = new Set();
+        window.renderedVulns = new Set();
     }
-
     data.vulns.forEach(v => {
-      const key = v.url + "|" + v.param + "|" + v.type;
+        // Safe field extraction
+        const url = v.url || "";
+        const endpoint = url.split("?")[0];
+        const param = (v.parameter || "").toLowerCase();
+        const vulnType = v.vuln_type || (v.context === "javascript" ? "DOM XSS" :
+            v.context === "html" ? "Stored XSS" :
+                    "Reflected XSS"
+        );
+        const severity = v.severity || "low";
+        const context = v.context || null;
 
-      if (!window.renderedVulns.has(key)) {
+        // ignore payload mutations in URL
+        const key = endpoint + "|" + param + "|" + vulnType + "|" + severity;
+
+        if (window.renderedVulns.has(key)) return;
         window.renderedVulns.add(key);
 
         const entry = document.createElement("div");
         entry.className = "feed-entry";
 
+        // Severity color bar
         entry.style.borderLeftColor =
-          v.severity === "critical" ? "#dc2626" :
-          v.severity === "high" ? "#ef4444" :
-          v.severity === "medium" ? "#facc15" :
-          "#22c55e";
+            severity === "critical" ? "#dc2626" :
+            severity === "high" ? "#ef4444" :
+            severity === "medium" ? "#facc15" :
+            "#22c55e";
 
+        // Context Badge
+        let contextBadge = "";
+
+        if (context) {
+            let color = "bg-gray-600";
+
+            if(context === "javascript") color = "bg-red-600";
+            if(context === "attribute") color = "bg-orange-600";
+            if(context === "html") color = "bg-yellow-600";
+            if(context === "url") color = "bg-blue-600";
+
+            contextBadge = `
+                <span class="text-xs ${color} px-2 py-1 rounded ml-2">
+                    ${context}
+                </span>
+            `;
+        }
+        // Render entry
         entry.innerHTML = `
-          <b>[${v.severity.toUpperCase()}]</b>
-          ${v.type} →
-          ${v.url}
+            <b>[${severity.toUpperCase()}]</b>
+            ${vulnType}
+            ${contextBadge}
+            →
+            ${url}
         `;
-
         feed.appendChild(entry);
-
-        // Auto-scroll
         feed.scrollTop = feed.scrollHeight;
-      }
     });
-    // ---- Button State Sync ----
+
+    // ------- BUTTON STATE SYNC ---------
     if (data.phase === "done") {
         scanState = "idle";
         scanCompleted = true;
         updateButtons(true);
     }
-
     else if (data.phase === "idle") {
         scanState = "idle";
         updateButtons(false);
     }
-
     else if (data.phase === "paused") {
         scanState = "paused";
         scanCompleted = false;
         updateButtons(false);
     }
-
-    else if (["crawling","scanning","ai"].includes(data.phase)) {
+    else if (["crawling","scanning","stored-analysis", "dom-analysis"].includes(data.phase)) {
         scanState = "running";
         scanCompleted = false;
         updateButtons(false);
@@ -916,48 +1009,9 @@ function connectSocket(){
     }
   };
 }
-
 connectSocket();
 
-function startScan(){
-  const target = document.getElementById("target").value;
-  const urlLimit = document.getElementById("urlLimit").value;
-  const depthLimit = document.getElementById("depthLimit").value;
-
-  fetch(
-      `/start?target=${encodeURIComponent(target)}&url_limit=${urlLimit}&depth_limit=${depthLimit}`,
-      {method:"POST"}
-    );
-
-  // Reset timeline
-  scanActive = false;
-  scanStartTime = null;
-  attackTimeline = [];
-  attackLabels = [];
-
-  if (timelineChart){
-    timelineChart.data.labels = [];
-    timelineChart.data.datasets[0].data = [];
-    timelineChart.update();
-  }
-
-  densityData = [];
-  densityLabels = [];
-  lastVulnCount = 0;
-
-  if (densityChart){
-      densityChart.data.labels = [];
-      densityChart.data.datasets[0].data = [];
-      densityChart.update();
-  }
-
-  // Reset rendered feed cache
-  window.renderedVulns = new Set();
-
-  // Reconnect WebSocket
-  if (socket) socket.close();
-  connectSocket();
-}
+///------------------ AI REMEDIATION PANEL ----------------------
 
 function openAISection(){
     document.getElementById("aiSection").style.display = "block";
@@ -970,7 +1024,18 @@ function renderAIList(){
     const container = document.getElementById("aiVulnList");
     container.innerHTML = "";
 
-    window.currentVulns.forEach((v, index)=>{
+    const seen = new Set();
+
+    window.currentVulns.forEach((v,index)=>{
+
+        const endpoint = v.url.split("?")[0];
+        const param = (v.parameter || "").toLowerCase();
+        const type = v.vuln_type || "XSS";
+        const key = endpoint + "|" + param + "|" + type;
+
+        if(seen.has(key)) return;
+        seen.add(key);
+
         const row = document.createElement("div");
         row.style.marginBottom = "12px";
         row.style.padding = "10px";
@@ -980,7 +1045,10 @@ function renderAIList(){
         row.innerHTML = `
             <div style="display:flex;justify-content:space-between;">
                 <div>
-                    <input type="checkbox" value="${index}">
+                    <input type="checkbox"
+                            value="${index}"
+                            ${selectedVulns.has(index) ? "checked" : ""}
+                            onchange="toggleSelection(${index}, this)">
                     <b>${v.url}</b>
                     (${v.param}) - ${v.severity}
                 </div>
@@ -989,9 +1057,11 @@ function renderAIList(){
                         onclick="toggleCard(${index})">
                         Toggle
                     </button>
-                    <button class="bg-green-500 px-3 py-2 mt-2 rounded-xl text-black font-bold hover:bg-green-100"
-                        onclick="generateSingleAI(${index})">
-                        Generate Fix
+                    <button
+                     class="bg-green-500 px-3 py-2 mt-2 rounded-xl text-black font-bold hover:bg-green-100"
+                     onclick="generateSingleAI(${index}, this)"
+                     ${generatingVulns.has(index) ? "disabled" : ""}>
+                     ${generatingVulns.has(index) ? "Generating..." : "Generate Fix"}
                     </button>
                 </div>
             </div>
@@ -1001,47 +1071,37 @@ function renderAIList(){
 
             return `
         <div id="cardBody-${index}" style="background:#020617;padding:12px;border-radius:8px;margin-top:8px;display:${collapsedCards.has(index) ? "none" : "block"}">
-
         <div style="color:#38bdf8;font-size:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
         <span>Generated in ${v.ai_time || "?"} seconds</span>
-
         </div>
-
         <div>
         <b style="color:#22c55e;">Explanation</b>
         <p>${s.explanation}</p>
         </div>
-
         <div style="margin-top:8px;">
         <b style="color:#22c55e;">Impact</b>
         <p>${s.impact}</p>
         </div>
-
         <div style="margin-top:8px;">
         <b style="color:#22c55e;">Secure Fix</b>
         <p>${s.fix}</p>
         </div>
-
         <div style="margin-top:8px;">
         <b style="color:#22c55e;">Secure Code Example</b>
         <pre style="background:#020617;padding:6px;border-radius:4px;">
         ${s.code}
         </pre>
         </div>
-
         <div style="margin-top:8px;">
         <b style="color:#22c55e;">Prevention Checklist</b>
         <p>${s.checklist}</p>
         </div>
-
         <button onclick="copyFix(${index})"
         class="bg-gray-500 px-2 py-1 mt-2 rounded-xl text-black font-bold hover:bg-gray-100">
         Copy
         </button>
-
         </div>
         `;
-
         })() : ""}
         `;
         container.appendChild(row);
@@ -1067,62 +1127,98 @@ function hideSpinner(){
     if (s) s.remove();
 }
 
-function generateSingleAI(index){
+function generateSingleAI(index, btn){
+
+    generatingVulns.add(index)
+
+    btn.disabled = true;
+    btn.innerText = "Generating...";
+
     showSpinner();
 
     fetch("/generate_ai",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify([index])
-    }).then(res=>res.json())
-      .then(data=>{
+    })
+    .then(res=>res.json())
+    .then(data=>{
         hideSpinner();
-        // Do nothing here.
-        // WebSocket will push updated vulns automatically.
+        generatingVulns.delete(index)
+        renderAIList()
+    })
+    .catch(()=>{
+        hideSpinner();
+        btn.disabled = false;
+        btn.innerText = "Generate Fix";
     });
 }
 
-function generateSelectedAI(){
-    const checkboxes =
-        document.querySelectorAll("#aiVulnList input:checked");
+function generateSelectedAI(btn){
 
-    const selected = Array.from(checkboxes)
-        .map(cb => parseInt(cb.value));
+    btn.disabled = true;
+    btn.innerText = "Generating...";
 
-    if (!selected.length) return;
+    const checkboxes = document.querySelectorAll("#aiVulnList input:checked");
 
+    const selected = Array.from(selectedVulns)
+
+    if (!selected.length){
+        btn.disabled = false;
+        btn.innerText = "Generate Fix";
+        return;
+    }
     showSpinner();
 
     fetch("/generate_ai",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(selected)
-    }).then(res=>res.json())
-      .then(data=>{
+    })
+    .then(res=>res.json())
+    .then(data=>{
         hideSpinner();
-        // Do nothing here.
-        // WebSocket will push updated vulns automatically.
+        btn.disabled = false;
+        btn.innerText = "Generate Fix";
+    })
+    .catch(()=>{
+        hideSpinner();
+        btn.disabled = false;
+        btn.innerText = "Generate Fix";
     });
 }
 
-function generateTop3(){
+function generateTop3(btn){
+
+    btn.disabled = true;
+    btn.innerText = "Generating...";
+
     const top3 = window.currentVulns
         .slice(0,3)
         .map((_,i)=>i);
 
-    if (!top3.length) return;
-
+    if (!top3.length){
+        btn.disabled = false;
+        btn.innerText = "Generate Top 3";
+        return;
+    }
     showSpinner();
 
     fetch("/generate_ai",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(top3)
-    }).then(res=>res.json())
-      .then(data=>{
+    })
+    .then(res=>res.json())
+    .then(data=>{
         hideSpinner();
-        renderAIList();
-        alert("Tokens used: " + (data.tokens || 0));
+        btn.disabled = false;
+        btn.innerText = "Generate Top 3";
+    })
+    .catch(()=>{
+        hideSpinner();
+        btn.disabled = false;
+        btn.innerText = "Generate Top 3";
     });
 }
 
@@ -1141,6 +1237,13 @@ function toggleCard(index){
         collapsedCards.add(index);
         body.style.display = "none";
     }
+}
+
+function toggleSelection(index, cb){
+    if(cb.checked)
+        selectedVulns.add(index)
+    else
+        selectedVulns.delete(index)
 }
 
 function parseAISections(text){

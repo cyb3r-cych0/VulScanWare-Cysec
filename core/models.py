@@ -16,6 +16,7 @@ class Vulnerability:
     payload: str
     evidence: str
     severity: str = "high"
+    context: Optional[str] = None
     ai_fix: Optional[str] = None
 
 @dataclass

@@ -1,6 +1,8 @@
 """Background runner (Web only)"""
 from core.engine import ScanEngine
 import time
+from urllib.parse import urlparse
+
 
 def run_scan(state, target, url_limit, depth_limit):
     start = time.time()
@@ -10,6 +12,8 @@ def run_scan(state, target, url_limit, depth_limit):
     state.paused = False
     state.stopped = False
     state.ai_done = False
+
+    seen_vulns = set()
 
     # ---------------- CRAWLING ----------------
     state.phase = "crawling"
@@ -57,11 +61,36 @@ def run_scan(state, target, url_limit, depth_limit):
             finding = engine.detector.detect(inj)
 
             if finding:
-                finding.severity = (
-                    "high" if "script" in finding.payload.lower()
-                    else "medium"
+
+                # keep severity from detector if already defined
+                if not getattr(finding, "severity", None):
+
+                    payload = (finding.payload or "").lower()
+
+                    if "<script" in payload:
+                        finding.severity = "high"
+
+                    elif "svg" in payload:
+                        finding.severity = "medium"
+
+                    elif "javascript:" in payload:
+                        finding.severity = "medium"
+
+                    else:
+                        finding.severity = "low"
+
+                endpoint = urlparse(finding.url).path
+                param = (finding.parameter or "").lower()
+
+                fingerprint = (
+                    endpoint,
+                    param,
+                    finding.vuln_type
                 )
-                state.vulnerabilities.append(finding)
+
+                if fingerprint not in seen_vulns:
+                    seen_vulns.add(fingerprint)
+                    state.vulnerabilities.append(finding)
 
     # ---------------- STORED ANALYSIS ----------------
 
@@ -76,7 +105,41 @@ def run_scan(state, target, url_limit, depth_limit):
     stored_findings = engine.stored_tracker.check_pages(all_urls)
 
     for v in stored_findings:
-        state.vulnerabilities.append(v)
+
+        v.severity = "critical"
+
+        endpoint = urlparse(v.url).path
+        param = (v.parameter or "").lower()
+
+        fingerprint = (
+            endpoint,
+            param,
+            v.vuln_type
+        )
+
+        if fingerprint not in seen_vulns:
+            seen_vulns.add(fingerprint)
+            state.vulnerabilities.append(v)
+
+    # ---------------- DOM ANALYSIS ----------------
+    state.phase = "dom-analysis"
+
+    if engine.dom:
+
+        from core.dom.playwright_dom import DomXSSDetector
+
+        dom_detector = DomXSSDetector()
+
+        for url in all_urls:
+
+            if state.stop:
+                state.phase = "idle"
+                return
+
+            result = dom_detector.scan_page(url)
+
+            if result:
+                state.vulnerabilities.append(result)
 
     # ---------------- COMPLETE ----------------
 

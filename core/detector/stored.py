@@ -21,7 +21,7 @@ class StoredXSSTracker:
 
         entry = {
             "token": token,
-            "parameter": injection["parameter"],
+            "parameter": injection.get("parameter") or injection.get("param"),
             "url": injection["url"]
         }
 
@@ -40,11 +40,9 @@ class StoredXSSTracker:
                 continue
 
             for entry in self.tracked_payloads:
-
                 token = entry["token"]
 
                 if token in r.text:
-
                     # prevent duplicate reporting
                     if (url, token) in self.detected_urls:
                         continue
@@ -58,8 +56,9 @@ class StoredXSSTracker:
                             parameter=entry["parameter"],
                             method="GET",
                             payload=token,
-                            evidence=f"Stored XSS token '{token}' detected in page response",
-                            severity="critical"
+                            evidence=f"Stored payload XSS token detected on page {url}",
+                            severity="critical",
+                            context="html"
                         )
                     )
 

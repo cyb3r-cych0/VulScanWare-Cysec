@@ -6,6 +6,10 @@ from core.ai.prompt import build_prompt
 from core.ai.cache import AICache
 from core.detector.stored import StoredXSSTracker
 from core.replay.form_replay import FormReplayEngine
+from core.plugins.manager import PluginManager
+from core.payloads.adaptive import AdaptiveEngine
+from urllib.parse import urlparse
+from core.discovery.param_discovery import ParameterDiscoveryEngine
 
 
 class ScanEngine:
@@ -27,10 +31,15 @@ class ScanEngine:
         self.ai = ai
         self.replay_engine = FormReplayEngine()
         self.ai_cache = AICache() if ai else None
+        self.plugin_manager = PluginManager()
+        self.plugin_manager.load_plugins()
+        self.adaptive = AdaptiveEngine()
+        self.param_discovery = ParameterDiscoveryEngine()
 
     def run(self, target: str):
         urls = self.crawler.crawl(target)
         vulns = []
+        seen_vulns = set()
 
         dom_detector = None
         if self.dom:
@@ -46,7 +55,17 @@ class ScanEngine:
                     vulns.append(dom_result)
 
             # ---------- Injection testing ----------
-            for inj in self.injector.inject(url):
+
+            # existing parameters
+            injections = self.injector.inject(url)
+
+            # parameter discovery (generate new URLs)
+            discovered = self.param_discovery.discover(url)
+
+            for d in discovered:
+                injections.extend(self.injector.inject(d["url"]))
+
+            for inj in injections:
 
                 # track payload for stored detection
                 self.stored_tracker.track(inj)
@@ -54,20 +73,47 @@ class ScanEngine:
                 # replay form submission
                 self.replay_engine.replay(inj)
 
-                finding = self.detector.detect(inj)
+                # -------- Adaptive payload analysis --------
+                if "response" in inj:
 
-                if finding and self.ai:
-                    ctx = build_prompt(finding)
-                    cached = self.ai_cache.get(ctx)
-                    if cached:
-                        finding.ai_fix = cached
-                    else:
-                        fix = self.ai.generate_fix(ctx)
-                        self.ai_cache.set(ctx, fix)
-                        finding.ai_fix = fix
+                    result = self.adaptive.analyze(
+                        inj["response"].text,
+                        inj["payload"]
+                    )
 
-                if finding:
-                    vulns.append(finding)
+                    if result != "reflected":
+                        new_payload = self.adaptive.mutate(
+                            inj["payload"],
+                            result
+                        )
+
+                        inj["payload"] = new_payload
+
+                findings = self.plugin_manager.run_plugins(inj)
+
+                for f in findings:
+
+                    endpoint = urlparse(f.url).path
+                    param = (f.parameter or "").lower()
+
+                    key = (endpoint, param, f.vuln_type)
+
+                    if key in seen_vulns:
+                        continue
+
+                    seen_vulns.add(key)
+                    vulns.append(f)
+
+                    if self.ai:
+                        ctx = build_prompt(f)
+                        cached = self.ai_cache.get(ctx)
+
+                        if cached:
+                            f.ai_fix = cached
+                        else:
+                            fix = self.ai.generate_fix(ctx)
+                            self.ai_cache.set(ctx, fix)
+                            f.ai_fix = fix
 
         # ---------- Stored XSS detection ----------
         # perform a second crawl to discover pages where payloads may appear
@@ -77,6 +123,18 @@ class ScanEngine:
         all_urls = list(set(urls + stored_urls))
 
         stored_findings = self.stored_tracker.check_pages(all_urls)
-        vulns.extend(stored_findings)
+
+        for f in stored_findings:
+
+            endpoint = urlparse(f.url).path
+            param = (f.parameter or "").lower()
+
+            key = (endpoint, param, f.vuln_type)
+
+            if key in seen_vulns:
+                continue
+
+            seen_vulns.add(key)
+            vulns.append(f)
 
         return ScanResult(target, vulns, len(urls))
