@@ -1,17 +1,23 @@
-class VulnPlugin:
-
+class PluginBase:
     name = "base"
+    plugin_type = "detector"   # detector | discovery | analytics
+    version = "1.0"
 
-    def scan(self, injection):
+    def run(self, injection):
         """
-        injection = {
-            url,
-            method,
-            payload,
-            parameter,
-            data
-        }
+        Detector plugins override this.
+        """
+        return []
 
-        return Vulnerability or None
+    def discover(self, url):
         """
+        Discovery plugins override this.
+        """
+        return []
+
+
+class DetectorPlugin:
+    name = "detector"
+
+    def run(self, injection):
         raise NotImplementedError

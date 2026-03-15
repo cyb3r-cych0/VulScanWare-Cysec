@@ -7,5 +7,4 @@ def cluster_vulnerabilities(vulns):
     for v in vulns:
         key = f"{v.vuln_type}:{v.parameter}"
         clusters[key].append(v)
-
     return clusters

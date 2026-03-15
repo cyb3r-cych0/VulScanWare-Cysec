@@ -2,7 +2,6 @@ import re
 
 
 def find_context(payload: str, response_text: str):
-
     contexts = []
 
     # HTML body context

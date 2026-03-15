@@ -6,7 +6,6 @@ CACHE_FILE = Path("ai_cache.json")
 
 
 class AICache:
-
     def __init__(self):
         if CACHE_FILE.exists():
             self.cache = json.loads(CACHE_FILE.read_text())

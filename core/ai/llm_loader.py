@@ -1,6 +1,7 @@
 from functools import lru_cache
 from llama_cpp import Llama
 
+
 @lru_cache(maxsize=1)
 def load_llm(
     model_path: str,

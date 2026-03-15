@@ -1,8 +1,8 @@
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
 import requests
 from bs4 import BeautifulSoup
-from core.payloads.registry import get_payloads
 from core.debug.payload_logger import log_injection
+from core.payload_plugins.manager import PayloadManager
 
 
 # Context Detection
@@ -31,6 +31,9 @@ class BasicInjector:
 
     def __init__(self, timeout=5):
         self.timeout = timeout
+        self.payload_manager = PayloadManager()
+        self.payload_manager.load()
+        self.payloads = self.payload_manager.payloads # load payload list once
 
     def inject(self, url: str):
 
@@ -44,10 +47,7 @@ class BasicInjector:
 
         for param in params:
 
-            # URL parameters are usually html/url contexts
-            for payload_obj in get_payloads("html") + get_payloads("url"):
-                payload = payload_obj["payload"]
-
+            for payload in self.payloads:
                 new_params = params.copy()
                 new_params[param] = payload
 
@@ -125,11 +125,9 @@ class BasicInjector:
                 if context is None:
                     continue
 
-                for payload_obj in get_payloads(context):
-                    payload = payload_obj["payload"]
+                for payload in self.payloads:
                     data = form_defaults.copy()
 
-                    # inject payload into target field
                     data[field] = payload
 
                     log_injection(method, action, field, payload, data)
@@ -141,5 +139,4 @@ class BasicInjector:
                         "payload": payload,
                         "data": data
                     })
-
         return injections
