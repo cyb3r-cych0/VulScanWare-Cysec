@@ -14,24 +14,23 @@ from core.ai.cache import AICache
 import time
 from core.analysis.clustering import cluster_vulnerabilities
 
+
 app = FastAPI()
 BASE_DIR = Path(__file__).resolve().parent
-
 active_connections: list[WebSocket] = []
+
 
 @app.get("/", response_class=HTMLResponse)
 def index():
     return (BASE_DIR / "templates" / "index.html").read_text(encoding="utf-8")
 
-# Thread Tracking
 scan_thread = None
 
-# WebSocket Endpoint
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     active_connections.append(websocket)
-
     try:
         while True:
             await send_status_update(websocket)
@@ -45,7 +44,6 @@ async def send_status_update(websocket: WebSocket):
     severity_dist = {}
 
     for v in web_state.vulnerabilities:
-
         # ---- TYPE DISTRIBUTION ----
         t = getattr(v, "vuln_type", None)
 
@@ -66,14 +64,12 @@ async def send_status_update(websocket: WebSocket):
         severity_dist[s] += 1
 
     def calculate_threat_index(vulns):
-
         weights = {
             "critical": 10,
             "high": 6,
             "medium": 3,
             "low": 1
         }
-
         seen = set()
         score = 0
 
@@ -90,11 +86,9 @@ async def send_status_update(websocket: WebSocket):
             seen.add(key)
             severity = (v.severity or "low").lower()
             score += weights.get(severity, 1)
-
         return min(score, 100)
 
     def calculate_attack_surface(vulns, urls):
-
         from urllib.parse import urlparse
         seen = set()
 
@@ -107,7 +101,6 @@ async def send_status_update(websocket: WebSocket):
         unique_vulns = len(seen)
         pages = max(len(urls), 1)
         score = round(unique_vulns / pages, 2)
-
         return score
 
     await websocket.send_json({
@@ -140,7 +133,6 @@ async def send_status_update(websocket: WebSocket):
     })
 
 
-# Scan Control
 def reset_state(state):
     state.phase = "idle"
     state.stop = False
@@ -160,14 +152,12 @@ def start(target: str, url_limit: int = 25, depth_limit: int = 2):
         return {"status": "scan already running"}
 
     reset_state(web_state)
-
     scan_thread = threading.Thread(
         target=run_scan,
         args=(web_state, target, url_limit, depth_limit),
         daemon=True
     )
     scan_thread.start()
-
     return {"status": "started"}
 
 
@@ -201,9 +191,7 @@ def reset_scan():
 
 @app.post("/generate_ai")
 def generate_ai(selected_ids: list[int]):
-
     total_tokens = 0
-
     llm = load_llm("models/mistral-7b-instruct-v0.1.Q4_K_M.gguf")
     ai = OfflineAIAdvisor(llm)
     cache = AICache()
@@ -226,7 +214,6 @@ def generate_ai(selected_ids: list[int]):
             cache.set(v, response_text)
         v.ai_fix = response_text
         v.ai_time = duration
-
     return {"status":"done","tokens":total_tokens}
 
 

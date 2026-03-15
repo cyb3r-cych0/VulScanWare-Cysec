@@ -1,8 +1,8 @@
 import os
 from datetime import datetime
 
-DEBUG = os.getenv("VSW_DEBUG", "0") == "1"
 
+DEBUG = os.getenv("VSW_DEBUG", "0") == "1"
 LOG_FILE = "vsw_payloads.log"
 
 
@@ -12,7 +12,6 @@ def log_injection(method, url, param, payload, data=None):
         return
 
     ts = datetime.now().strftime("%H:%M:%S")
-
     entry = f"[{ts}] {method} {url} | {param}={payload}"
 
     if data:

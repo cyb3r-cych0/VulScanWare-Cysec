@@ -3,9 +3,7 @@ import requests
 
 
 def test_reflected_xss_detection(monkeypatch):
-
     detector = ReflectedXSSDetector()
-
     injection = {
         "url": "http://example.com/?q=<script>alert(1)</script>",
         "method": "GET",
@@ -21,7 +19,6 @@ def test_reflected_xss_detection(monkeypatch):
         return MockResponse()
 
     monkeypatch.setattr(requests, "get", mock_get)
-
     result = detector.detect(injection)
 
     assert result is not None

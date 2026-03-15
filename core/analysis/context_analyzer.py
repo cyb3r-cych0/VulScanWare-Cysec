@@ -4,7 +4,6 @@ import re
 class ReflectionContextAnalyzer:
 
     def analyze(self, response_text, payload):
-
         idx = response_text.find(payload)
 
         if idx == -1:

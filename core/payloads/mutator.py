@@ -1,5 +1,5 @@
 import urllib.parse
-import html
+
 
 def mutate(payload: str):
     return {

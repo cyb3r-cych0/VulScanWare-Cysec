@@ -1,6 +1,7 @@
 from playwright.sync_api import sync_playwright
 from core.models import Vulnerability
 
+
 JS_HOOKS = r"""
 (() => {
   window.__xss_hits = [];
@@ -28,6 +29,7 @@ JS_HOOKS = r"""
   });
 })();
 """
+
 
 class DomXSSDetector:
     def __init__(self, timeout_ms=8000):
@@ -61,5 +63,4 @@ class DomXSSDetector:
                 severity="critical",
                 context="javascript"
             )
-
         return None
