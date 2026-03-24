@@ -30,3 +30,4 @@ TODO.md
 reports/output/
 vsw_payloads.log
 ai_cache.json
+.gitignore
