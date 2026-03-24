@@ -1,9 +1,8 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import HTMLResponse, FileResponse
 from ui.web.state import web_state
 from ui.web.runner import run_scan
 from core.report.html import HTMLReport
-from collections import Counter
 import threading
 from pathlib import Path
 import asyncio
@@ -12,17 +11,24 @@ from core.ai.offline import OfflineAIAdvisor
 from core.ai.llm_loader import load_llm
 from core.ai.cache import AICache
 import time
-from core.analysis.clustering import cluster_vulnerabilities
-
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 BASE_DIR = Path(__file__).resolve().parent
 active_connections: list[WebSocket] = []
 
+# Mount static files (CSS, JS)
+app.mount("/static", StaticFiles(directory="ui/web/static"), name="static")
+
+# Setup templates
+templates = Jinja2Templates(directory="ui/web/templates")
+
 
 @app.get("/", response_class=HTMLResponse)
-def index():
-    return (BASE_DIR / "templates" / "index.html").read_text(encoding="utf-8")
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
 
 scan_thread = None
 

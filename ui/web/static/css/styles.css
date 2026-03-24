@@ -1,0 +1,113 @@
+body {
+    background:#020617;
+    color:#e5e7eb;
+    font-family:Arial,serif;
+    margin:0;
+}
+
+header {
+    padding:20px;
+    background:#0f172a;
+    text-align:center;
+    font-size:33px;
+    color:greenyellow;
+    margin-top: 15px;
+    border-radius: 15px;
+}
+
+.card {
+    background:#0f172a;
+    margin:20px;
+    padding:15px;
+    border-radius:8px;
+}
+
+.grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+}
+
+.metric {
+    font-size:22px;
+}
+
+.red {color:#ef4444;}
+.orange {color:#f97316;}
+.yellow {color:#facc15;}
+.green {color:#22c55e;}
+
+.feed-entry {
+    padding:6px;
+    margin-bottom:4px;
+    border-left:4px solid #38bdf8;
+    animation: flash 0.6s ease-in-out;
+}
+
+@keyframes flash {
+    from { background:#1e293b; }
+    to { background:transparent; }
+}
+
+canvas {
+    filter: drop-shadow(0 0 10px rgba(0,255,255,0.3));
+}
+
+#phaseHeader {
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+    margin-left: 20px;
+    margin-right: 20px;
+    background: #0f172a;
+}
+
+.phase-crawling {
+    background:#1e3a8a;
+    box-shadow:0 0 5px #3b82f6;
+}
+
+.phase-scanning {
+    background:#78350f;
+    box-shadow:0 0 5px #facc15;
+}
+
+.phase-ai {
+    background:#4c1d95;
+    box-shadow:0 0 5px #a855f7;
+}
+
+.phase-stored-analysis {
+    background:#0f766e;
+    box-shadow:0 0 5px #2dd4bf;
+}
+.phase-dom-analysis{
+    background: #6366f1;
+    box-shadow:0 0 5px #8b5cf6;
+}
+
+.phase-done {
+    background:#14532d;
+    box-shadow:0 0 5px #22c55e;
+}
+
+.spinner {
+    border:3px solid #1e293b;
+    border-top:3px solid #38bdf8;
+    border-radius:50%;
+    width:18px;
+    height:18px;
+    animation:spin 1s linear infinite;
+    display:inline-block;
+}
+
+.ai-card{
+    border:1px solid #1e293b;
+    transition:all 0.25s ease;
+}
+
+.ai-card:hover{
+    border-color:#38bdf8;
+    box-shadow:0 0 6px rgba(56,189,248,0.4);
+}
+
+@keyframes spin {
+    100% { transform:rotate(360deg); }
+}
